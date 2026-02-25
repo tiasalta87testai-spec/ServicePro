@@ -53,3 +53,28 @@ export async function getDashboardStats() {
         weeklyRevenue: totalRevenue || 0
     }
 }
+
+export async function getDashboardEvents() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    // Next 30 days roughly
+    const thirtyDaysFromNow = new Date()
+    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
+
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const { data: events, error } = await supabase
+        .from('events')
+        .select('id, name, start_date, end_date, status')
+        .order('start_date', { ascending: true })
+
+    if (error) {
+        console.error('Error fetching dashboard events:', error)
+        return []
+    }
+
+    return events || []
+}

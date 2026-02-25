@@ -12,6 +12,15 @@ const nextConfig = {
     eslint: {
         ignoreDuringBuilds: true,
     },
+    async redirects() {
+        return [
+            {
+                source: '/dashboard',
+                destination: '/',
+                permanent: true,
+            },
+        ]
+    },
 }
 
 export default withPWA(nextConfig)

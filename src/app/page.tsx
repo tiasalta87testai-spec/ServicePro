@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarDays, PackageOpen, TrendingUp } from "lucide-react"
-import { getDashboardStats } from "@/app/actions/dashboard"
+import { getDashboardStats, getDashboardEvents } from "@/app/actions/dashboard"
 import { DashboardCalendar } from "@/components/DashboardCalendar"
 
 export default async function Home() {
   const stats = await getDashboardStats()
+  const dbEvents = await getDashboardEvents()
 
   return (
     <div className="space-y-6">
@@ -62,10 +63,10 @@ export default async function Home() {
 
       <Card className="shadow-sm border-slate-200 mt-6 overflow-hidden">
         <CardHeader>
-          <CardTitle className="text-lg text-slate-800">Timeline Eventi (Prossimi 30 giorni)</CardTitle>
+          <CardTitle className="text-lg text-slate-800">Timeline Eventi</CardTitle>
         </CardHeader>
         <CardContent>
-          <DashboardCalendar />
+          <DashboardCalendar initialEvents={dbEvents} />
         </CardContent>
       </Card>
     </div>

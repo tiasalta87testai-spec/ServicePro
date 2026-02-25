@@ -12,17 +12,28 @@ export default function RootLayoutClient({
 }) {
     const pathname = usePathname()
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
-    const supabase = createClient()
+    const [supabase] = useState(() => createClient())
 
     useEffect(() => {
         const checkUser = async () => {
-            const { data: { session } } = await supabase.auth.getSession()
-            setIsAuthenticated(!!session)
+            try {
+                console.log("Checking user session...");
+                const { data: { session }, error } = await supabase.auth.getSession()
+                if (error) {
+                    console.error("Session error:", error);
+                }
+                console.log("Session fetched:", !!session);
+                setIsAuthenticated(!!session)
+            } catch (err) {
+                console.error("Error checking user:", err);
+                setIsAuthenticated(false);
+            }
         }
 
         checkUser()
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log("Auth state changed:", _event, !!session);
             setIsAuthenticated(!!session)
         })
 

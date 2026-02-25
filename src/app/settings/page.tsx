@@ -7,10 +7,44 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { TeamManagement } from "@/components/TeamManagement"
 import { getTeamMembers } from "@/app/actions/team"
+import { GoogleCalendarSync } from "@/components/GoogleCalendarSync"
+import { createClient } from "@/utils/supabase/server"
+import { CompanySettingsForm } from "@/components/CompanySettingsForm"
 
 export default async function SettingsPage() {
     const teamResult = await getTeamMembers()
     const teamMembers = ('data' in teamResult) ? (teamResult.data || []) : []
+
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    let isGoogleConnected = false
+    let tenantSettings: any = null
+
+    if (user) {
+        const { data: config } = await supabase
+            .from('google_calendar_configs')
+            .select('id')
+            .eq('user_id', user.id)
+            .single()
+        isGoogleConnected = !!config
+
+        // Get tenant data
+        const { data: currentUser } = await supabase
+            .from('users')
+            .select('tenant_id')
+            .eq('id', user.id)
+            .single()
+
+        if (currentUser?.tenant_id) {
+            const { data: tenant } = await supabase
+                .from('tenants')
+                .select('*')
+                .eq('id', currentUser.tenant_id)
+                .single()
+            tenantSettings = tenant
+        }
+    }
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
@@ -28,41 +62,13 @@ export default async function SettingsPage() {
 
                 {/* Tab Azienda */}
                 <TabsContent value="company" className="mt-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Dettagli Aziendali</CardTitle>
-                            <CardDescription>
-                                Informazioni sull&apos;azienda utilizzate per la fatturazione e nei preventivi.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="companyName">Nome Azienda</Label>
-                                    <Input id="companyName" defaultValue="Service Pro Audio Lighting" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="vat">Partita IVA</Label>
-                                    <Input id="vat" defaultValue="IT01234567890" />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="address">Indirizzo Sede Legale</Label>
-                                <Input id="address" defaultValue="Via Milano 12, 20100 Milano (MI)" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="email">Email Contatto</Label>
-                                    <Input id="email" type="email" defaultValue="info@servicepro.it" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="phone">Telefono</Label>
-                                    <Input id="phone" type="tel" defaultValue="+39 02 1234567" />
-                                </div>
-                            </div>
-                            <Button className="mt-4 bg-teal-500 hover:bg-teal-600">Salva Modifiche</Button>
-                        </CardContent>
-                    </Card>
+                    {tenantSettings ? (
+                        <CompanySettingsForm initialData={tenantSettings} />
+                    ) : (
+                        <div className="p-4 bg-slate-50 border border-slate-200 rounded text-slate-500 text-sm">
+                            Impossibile caricare i dati dell'azienda.
+                        </div>
+                    )}
                 </TabsContent>
 
                 {/* Tab Messaggistica */}
@@ -111,23 +117,7 @@ export default async function SettingsPage() {
 
                 {/* Tab Calendar */}
                 <TabsContent value="calendar" className="mt-6 space-y-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Google Calendar Sync</CardTitle>
-                            <CardDescription>
-                                Sincronizza gli eventi confermati con un Google Calendar condiviso col team.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-sm font-medium text-slate-900">Stato Connessione</p>
-                                    <p className="text-sm text-slate-500">Nessun account Google collegato.</p>
-                                </div>
-                                <Button variant="outline">Collega Google Account</Button>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <GoogleCalendarSync initialStatus={isGoogleConnected} />
                 </TabsContent>
 
                 {/* Tab Team */}

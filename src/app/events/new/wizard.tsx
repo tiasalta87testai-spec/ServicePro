@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Check, ChevronRight, ChevronLeft, Search, Plus, Minus, Trash2, Package, Speaker, Lightbulb, Monitor, Wrench } from "lucide-react"
+import { Check, ChevronRight, ChevronLeft, Search, Plus, Minus, Trash2, Package, Speaker, Lightbulb, Monitor, Wrench, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useClashDetection } from "@/hooks/useClashDetection"
 
 type EquipmentItem = {
     id: string
@@ -71,6 +72,63 @@ interface EventWizardProps {
     }
 }
 
+function EquipmentListItem({
+    item,
+    isSelected,
+    onAdd,
+    startDate,
+    endDate,
+    eventId,
+    categoryColors,
+    categoryIcons
+}: {
+    item: EquipmentItem;
+    isSelected: boolean;
+    onAdd: () => void;
+    startDate: string;
+    endDate: string;
+    eventId?: string;
+    categoryColors: Record<string, string>;
+    categoryIcons: Record<string, React.ReactNode>;
+}) {
+    const { bookedQuantity, isLoading } = useClashDetection(item.id, startDate, endDate, eventId)
+    // current_available includes total inventory minus what's permanently checked out,
+    // bookedQuantity represents what's booked in other overlapping events.
+    const actualAvailable = Math.max(0, item.current_available - bookedQuantity)
+
+    return (
+        <div
+            className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${isSelected ? 'border-teal-300 bg-teal-50' : (actualAvailable === 0 && !isSelected) ? 'border-red-200 bg-red-50 opacity-70' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
+        >
+            <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded flex items-center justify-center ${categoryColors[item.category] || 'bg-slate-100 text-slate-600'}`}>
+                    {categoryIcons[item.category] || <Package className="h-4 w-4" />}
+                </div>
+                <div>
+                    <p className="font-medium text-sm text-slate-900">{item.name}</p>
+                    <p className={`text-xs ${actualAvailable === 0 && !isSelected ? 'text-red-600 font-semibold' : 'text-slate-500'}`}>
+                        Disp: {isLoading ? '...' : actualAvailable}/{item.total_quantity} &bull; &euro; {item.daily_rental_price.toFixed(2)}/gg
+                    </p>
+                </div>
+            </div>
+            {isSelected ? (
+                <div className="flex items-center gap-1">
+                    <span className="text-xs text-teal-600 font-medium mr-2">Aggiunto</span>
+                </div>
+            ) : (
+                <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 text-xs border-teal-300 text-teal-600 hover:bg-teal-50"
+                    onClick={onAdd}
+                    disabled={actualAvailable === 0 || isLoading}
+                >
+                    <Plus className="h-3 w-3 mr-1" /> Aggiungi
+                </Button>
+            )}
+        </div>
+    )
+}
 
 export function EventWizard({ equipment, clients, initialData }: EventWizardProps) {
     const [currentStep, setCurrentStep] = useState(0)
@@ -101,7 +159,7 @@ export function EventWizard({ equipment, clients, initialData }: EventWizardProp
         if (existing) {
             setSelectedEquipment(prev =>
                 prev.map(s => s.equipment.id === item.id
-                    ? { ...s, quantity: Math.min(s.quantity + 1, item.current_available) }
+                    ? { ...s, quantity: s.quantity + 1 }
                     : s
                 )
             )
@@ -116,7 +174,7 @@ export function EventWizard({ equipment, clients, initialData }: EventWizardProp
                 if (s.equipment.id !== equipmentId) return s
                 const newQty = s.quantity + delta
                 if (newQty <= 0) return s
-                if (newQty > s.equipment.current_available) return s
+                // We don't block max quantity here, we'll validate it on server or show warning
                 return { ...s, quantity: newQty }
             })
         )
@@ -330,37 +388,17 @@ export function EventWizard({ equipment, clients, initialData }: EventWizardProp
                                         filteredEquipment.map(item => {
                                             const isSelected = selectedEquipment.some(s => s.equipment.id === item.id)
                                             return (
-                                                <div
+                                                <EquipmentListItem
                                                     key={item.id}
-                                                    className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${isSelected ? 'border-teal-300 bg-teal-50' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={`w-8 h-8 rounded flex items-center justify-center ${categoryColors[item.category] || 'bg-slate-100 text-slate-600'}`}>
-                                                            {categoryIcons[item.category] || <Package className="h-4 w-4" />}
-                                                        </div>
-                                                        <div>
-                                                            <p className="font-medium text-sm text-slate-900">{item.name}</p>
-                                                            <p className="text-xs text-slate-500">
-                                                                Disp: {item.current_available}/{item.total_quantity} &bull; &euro; {item.daily_rental_price.toFixed(2)}/gg
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    {isSelected ? (
-                                                        <div className="flex items-center gap-1">
-                                                            <span className="text-xs text-teal-600 font-medium mr-2">Aggiunto</span>
-                                                        </div>
-                                                    ) : (
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                            className="h-8 text-xs border-teal-300 text-teal-600 hover:bg-teal-50"
-                                                            onClick={() => addEquipment(item)}
-                                                            disabled={item.current_available === 0}
-                                                        >
-                                                            <Plus className="h-3 w-3 mr-1" /> Aggiungi
-                                                        </Button>
-                                                    )}
-                                                </div>
+                                                    item={item}
+                                                    isSelected={isSelected}
+                                                    onAdd={() => addEquipment(item)}
+                                                    startDate={startDate}
+                                                    endDate={endDate || startDate}
+                                                    eventId={initialData?.id}
+                                                    categoryColors={categoryColors}
+                                                    categoryIcons={categoryIcons}
+                                                />
                                             )
                                         })
                                     )}

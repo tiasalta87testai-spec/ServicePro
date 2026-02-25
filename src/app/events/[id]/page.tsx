@@ -9,7 +9,8 @@ import Link from "next/link"
 import { format } from "date-fns"
 import { it } from "date-fns/locale"
 import { ScannerPlaceholder } from "./scanner"
-import { GenerateQuoteButton } from "@/components/GenerateQuoteButton"
+import { GenerateQuoteButtonWrapper } from "@/components/GenerateQuoteButtonWrapper"
+import { EquipmentQRCode } from "@/components/EquipmentQRCode"
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
     const result = await getEventById(params.id)
@@ -44,6 +45,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
             quantity: item.quantity,
             dailyPrice: item.equipment?.daily_rental_price || 0,
         })),
+        tenant: event.tenants
     }
 
     return (
@@ -66,7 +68,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <GenerateQuoteButton data={quoteData} />
+                    <GenerateQuoteButtonWrapper data={quoteData} />
                     <Button asChild className="bg-teal-500 hover:bg-teal-600">
                         <Link href={`/events/${event.id}/edit`}>
                             <Edit className="mr-2 h-4 w-4" /> Modifica
@@ -167,12 +169,13 @@ export default async function EventDetailPage({ params }: { params: { id: string
                                             <th className="px-4 py-3 font-medium text-slate-600">Articolo</th>
                                             <th className="px-4 py-3 font-medium text-slate-600">Stato</th>
                                             <th className="px-4 py-3 font-medium text-slate-600 text-right">Q.t&agrave; Richiesta</th>
+                                            <th className="px-4 py-3 font-medium text-slate-600 text-center w-16">QR</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 bg-white">
                                         {packingList.length === 0 ? (
                                             <tr>
-                                                <td colSpan={3} className="px-4 py-8 text-center text-slate-500">
+                                                <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
                                                     Nessun articolo assegnato a questo evento. Apri il preventivo per aggiungere materiale.
                                                 </td>
                                             </tr>
@@ -203,6 +206,15 @@ export default async function EventDetailPage({ params }: { params: { id: string
                                                     </td>
                                                     <td className="px-4 py-3 text-right font-medium text-slate-900">
                                                         {item.quantity}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-center">
+                                                        <EquipmentQRCode
+                                                            equipmentId={item.equipment.id}
+                                                            equipmentName={item.equipment.name}
+                                                            serialNumber={item.equipment.serial_number}
+                                                            eventId={event.id}
+                                                            eventName={event.name}
+                                                        />
                                                     </td>
                                                 </tr>
                                             ))
