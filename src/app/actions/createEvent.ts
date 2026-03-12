@@ -11,6 +11,7 @@ export async function createEvent(data: {
     client_id: string | null
     location: string
     notes: string
+    status?: string
     equipment: Array<{ equipment_id: string; quantity: number }>
 }) {
     const supabase = await createClient()
@@ -64,7 +65,7 @@ export async function createEvent(data: {
             in_date: data.end_date,
             client_id: data.client_id || null,
             location: data.location || null,
-            status: 'draft',
+            status: data.status || 'draft',
         })
         .select('*')
         .single()

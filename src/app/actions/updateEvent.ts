@@ -13,6 +13,7 @@ export async function updateEvent(
         client_id: string | null
         location: string
         notes: string
+        status?: string
         equipment: Array<{ equipment_id: string; quantity: number }>
     }
 ) {
@@ -66,6 +67,7 @@ export async function updateEvent(
             in_date: data.end_date,
             client_id: data.client_id || null,
             location: data.location || null,
+            ...(data.status && { status: data.status }),
         })
         .eq('id', id)
 

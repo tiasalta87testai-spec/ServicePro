@@ -58,38 +58,100 @@ export function DataTable<TData, TValue>({
         initialState: {
             pagination: {
                 pageSize: 10,
+            },
+            columnVisibility: {
+                subcategory: false
             }
         }
     })
 
+    const categoryFilterValue = (table.getColumn("category")?.getFilterValue() as string) || "all"
+    const subcategoryFilterValue = (table.getColumn("subcategory")?.getFilterValue() as string) || "all"
+    const conditionFilterValue = (table.getColumn("condition")?.getFilterValue() as string) || "all"
+    
+    // Derived subcategories based on standard categories
+    const EQUIPMENT_SUBCATEGORIES: Record<string, string[]> = {
+        audio: ['Casse', 'Mixer', 'Microfoni', 'Cavi', 'Aste', 'Altro'],
+        luci: ['Fari', 'Mixer Luci', 'Teste Mobili', 'Cavi', 'Stativi', 'Altro'],
+        video: ['Proiettori', 'Schermi', 'Telecamere', 'Cavi', 'Altro'],
+        strutture: ['Americane', 'Elevatori', 'Pedane', 'Zavorre', 'Altro'],
+        servizio: ['Cavi Elettrici', 'Quadri Elettrici', 'Fascette', 'Nastro', 'Altro']
+    }
+
+    const availableSubcategories = categoryFilterValue !== "all" 
+        ? EQUIPMENT_SUBCATEGORIES[categoryFilterValue] || []
+        : [];
+
     return (
         <div>
-            <div className="flex items-center p-4 gap-4 bg-white border-b border-slate-200 rounded-t-lg">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 bg-white border-b border-slate-200 rounded-t-lg">
                 <Input
                     placeholder="Cerca per nome..."
                     value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
                         table.getColumn("name")?.setFilterValue(event.target.value)
                     }
-                    className="max-w-sm"
+                    className="max-w-[250px] shrink-0"
                 />
-                <Select
-                    value={(table.getColumn("category")?.getFilterValue() as string) ?? "all"}
-                    onValueChange={(value) =>
-                        table.getColumn("category")?.setFilterValue(value === "all" ? "" : value)
-                    }
-                >
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Categoria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Tutte le Categorie</SelectItem>
-                        <SelectItem value="audio">Audio</SelectItem>
-                        <SelectItem value="luci">Luci</SelectItem>
-                        <SelectItem value="video">Video</SelectItem>
-                        <SelectItem value="strutture">Strutture</SelectItem>
-                    </SelectContent>
-                </Select>
+                
+                <div className="flex flex-wrap gap-2 flex-1">
+                    <Select
+                        value={categoryFilterValue}
+                        onValueChange={(value) => {
+                            table.getColumn("category")?.setFilterValue(value === "all" ? "" : value)
+                            // Reset subcategory when category changes
+                            table.getColumn("subcategory")?.setFilterValue("")
+                        }}
+                    >
+                        <SelectTrigger className="w-[160px] shrink-0">
+                            <SelectValue placeholder="Categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Tutte le Categorie</SelectItem>
+                            <SelectItem value="audio">Audio</SelectItem>
+                            <SelectItem value="luci">Luci</SelectItem>
+                            <SelectItem value="video">Video</SelectItem>
+                            <SelectItem value="strutture">Strutture</SelectItem>
+                            <SelectItem value="servizio">Servizio</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        value={subcategoryFilterValue}
+                        onValueChange={(value) =>
+                            table.getColumn("subcategory")?.setFilterValue(value === "all" ? "" : value)
+                        }
+                        disabled={availableSubcategories.length === 0}
+                    >
+                        <SelectTrigger className="w-[160px] shrink-0">
+                            <SelectValue placeholder="Sottocategoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Tutte (Sottocat.)</SelectItem>
+                            {availableSubcategories.map(sub => (
+                                <SelectItem key={sub} value={sub.toLowerCase()}>{sub}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        value={conditionFilterValue}
+                        onValueChange={(value) =>
+                            table.getColumn("condition")?.setFilterValue(value === "all" ? "" : value)
+                        }
+                    >
+                        <SelectTrigger className="w-[160px] shrink-0">
+                            <SelectValue placeholder="Stato Materiale" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Tutti gli Stati</SelectItem>
+                            <SelectItem value="ottimo">Ottimo</SelectItem>
+                            <SelectItem value="buono">Buono</SelectItem>
+                            <SelectItem value="da_revisionare">Da Revisionare</SelectItem>
+                            <SelectItem value="dismesso">Dismesso</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
             <div className="rounded-none border-0">
                 <Table>

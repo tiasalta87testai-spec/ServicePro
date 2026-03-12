@@ -29,6 +29,7 @@ export default async function EditEventPage({ params }: { params: { id: string }
         client_id: event.client_id,
         location: event.location,
         notes: event.notes,
+        status: event.status,
         equipment: packingList.map((item: any) => ({
             equipment: item.equipment,
             quantity: item.quantity

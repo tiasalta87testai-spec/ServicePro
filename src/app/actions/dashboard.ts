@@ -24,12 +24,14 @@ export async function getDashboardStats() {
     }
 
     // 1) Active events
-    const today = new Date().toISOString()
+    // We use today's date format YYYY-MM-DD to avoid time zone issues with timestamp
+    const today = new Date().toISOString().split('T')[0]
     const { count: activeEventsCount } = await supabase
         .from('events')
         .select('*', { count: 'exact', head: true })
         .gte('in_date', today)
         .lte('out_date', today)
+        .in('status', ['confirmed', 'completed'])
 
     // 2) Equipment out (loaded but not returned)
     const { count: equipmentOutCount } = await supabase
@@ -47,11 +49,55 @@ export async function getDashboardStats() {
 
     const totalRevenue = quotes?.reduce((acc, q) => acc + (q.total_amount || 0), 0) || 0
 
+    // 4) Warehouse utilization and maintenance alerts
+    const { data: equipData } = await supabase
+        .from('equipment')
+        .select('total_quantity, current_available, condition')
+
+    let totalEq = 0
+    let availEq = 0
+    let maintenanceAlerts = 0
+
+    if (equipData) {
+        equipData.forEach(eq => {
+            totalEq += (eq.total_quantity || 0)
+            availEq += (eq.current_available || 0)
+            if (eq.condition === 'da_revisionare') {
+                maintenanceAlerts++
+            }
+        })
+    }
+
     return {
         activeEvents: activeEventsCount || 0,
         equipmentOut: equipmentOutCount || 0,
-        weeklyRevenue: totalRevenue || 0
+        weeklyRevenue: totalRevenue || 0,
+        equipmentTotal: totalEq,
+        equipmentAvailable: availEq,
+        maintenanceAlerts
     }
+}
+
+export async function getUpcomingEvents() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    const today = new Date().toISOString().split('T')[0]
+
+    const { data: events, error } = await supabase
+        .from('events')
+        .select('id, name, start_date, end_date, status, clients(name, company_name)')
+        .gte('start_date', today)
+        .order('start_date', { ascending: true })
+        .limit(5)
+
+    if (error) {
+        console.error('Error fetching upcoming events:', error)
+        return []
+    }
+
+    return events || []
 }
 
 export async function getDashboardEvents() {

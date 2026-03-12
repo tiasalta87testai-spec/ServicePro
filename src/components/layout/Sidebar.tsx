@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import {
     LayoutDashboard,
     CalendarDays,
+    Calendar,
     Package,
     Settings,
     QrCode,
@@ -17,6 +18,7 @@ const navigation = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Clienti", href: "/clients", icon: Users },
     { name: "Eventi", href: "/events", icon: CalendarDays },
+    { name: "Calendario", href: "/calendar", icon: Calendar },
     { name: "Magazzino", href: "/equipment", icon: Package },
     { name: "Scanner", href: "/scanner", icon: QrCode, mobileOnly: true },
     { name: "Impostazioni", href: "/settings", icon: Settings },

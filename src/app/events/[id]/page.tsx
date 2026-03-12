@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowLeft, Edit, Calendar, MapPin, User, Send, CheckCircle2, Box, QrCode } from "lucide-react"
+import { ArrowLeft, Edit, Calendar, MapPin, User, Send, Box } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { it } from "date-fns/locale"
 import { ScannerPlaceholder } from "./scanner"
 import { GenerateQuoteButtonWrapper } from "@/components/GenerateQuoteButtonWrapper"
-import { EquipmentQRCode } from "@/components/EquipmentQRCode"
+import PackingListInteractive from "./packing-list-interactive"
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
     const result = await getEventById(params.id)
@@ -147,81 +147,22 @@ export default async function EventDetailPage({ params }: { params: { id: string
                     </div>
                 </TabsContent>
 
-                {/* Tab Packing List */}
+                {/* Tab Packing List Interattiva */}
                 <TabsContent value="packing" className="mt-6">
                     <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
+                        <CardHeader>
                             <div>
                                 <CardTitle>Packing List & Logistica</CardTitle>
-                                <CardDescription>Scannerizza i QR Code per caricare l&apos;attrezzatura richiesta.</CardDescription>
+                                <CardDescription>Gestisci il carico e il rientro del materiale per questo evento.</CardDescription>
                             </div>
-                            <Button size="sm" variant="outline" className="hidden sm:flex">
-                                <QrCode className="mr-2 h-4 w-4" /> Avvia Scanner Telecamera
-                            </Button>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <ScannerPlaceholder />
-
-                            <div className="border border-slate-200 rounded-lg overflow-hidden">
-                                <table className="w-full text-sm text-left">
-                                    <thead className="bg-slate-50 border-b border-slate-200">
-                                        <tr>
-                                            <th className="px-4 py-3 font-medium text-slate-600">Articolo</th>
-                                            <th className="px-4 py-3 font-medium text-slate-600">Stato</th>
-                                            <th className="px-4 py-3 font-medium text-slate-600 text-right">Q.t&agrave; Richiesta</th>
-                                            <th className="px-4 py-3 font-medium text-slate-600 text-center w-16">QR</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100 bg-white">
-                                        {packingList.length === 0 ? (
-                                            <tr>
-                                                <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
-                                                    Nessun articolo assegnato a questo evento. Apri il preventivo per aggiungere materiale.
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                            packingList.map((item: any) => (
-                                                <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                                                    <td className="px-4 py-3">
-                                                        <div className="font-medium text-slate-900">{item.equipment.name}</div>
-                                                        <div className="text-xs text-slate-500 flex items-center gap-2 mt-1">
-                                                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">{item.equipment.category}</Badge>
-                                                            {item.equipment.serial_number && <span>SN: {item.equipment.serial_number}</span>}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        {item.is_returned ? (
-                                                            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-700">
-                                                                <CheckCircle2 className="h-3 w-3" /> Rientrato
-                                                            </span>
-                                                        ) : item.is_loaded ? (
-                                                            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700">
-                                                                <CheckCircle2 className="h-3 w-3" /> Caricato in Furgone
-                                                            </span>
-                                                        ) : (
-                                                            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600">
-                                                                <Box className="h-3 w-3" /> Da Preparare
-                                                            </span>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-4 py-3 text-right font-medium text-slate-900">
-                                                        {item.quantity}
-                                                    </td>
-                                                    <td className="px-4 py-3 text-center">
-                                                        <EquipmentQRCode
-                                                            equipmentId={item.equipment.id}
-                                                            equipmentName={item.equipment.name}
-                                                            serialNumber={item.equipment.serial_number}
-                                                            eventId={event.id}
-                                                            eventName={event.name}
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
+                            <PackingListInteractive
+                                packingList={packingList}
+                                eventId={event.id}
+                                eventName={event.name}
+                            />
                         </CardContent>
                     </Card>
                 </TabsContent>

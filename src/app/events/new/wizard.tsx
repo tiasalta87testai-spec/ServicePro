@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Check, ChevronRight, ChevronLeft, Search, Plus, Minus, Trash2, Package, Speaker, Lightbulb, Monitor, Wrench, AlertCircle } from "lucide-react"
+import { Check, ChevronRight, ChevronLeft, Search, Plus, Minus, Trash2, Package, Speaker, Lightbulb, Monitor, Wrench, AlertCircle, Briefcase } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useClashDetection } from "@/hooks/useClashDetection"
 
@@ -48,6 +48,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
     luci: <Lightbulb className="h-4 w-4" />,
     video: <Monitor className="h-4 w-4" />,
     strutture: <Wrench className="h-4 w-4" />,
+    servizio: <Briefcase className="h-4 w-4" />,
 }
 
 const categoryColors: Record<string, string> = {
@@ -55,6 +56,7 @@ const categoryColors: Record<string, string> = {
     luci: "bg-amber-100 text-amber-700",
     video: "bg-purple-100 text-purple-700",
     strutture: "bg-slate-100 text-slate-700",
+    servizio: "bg-emerald-100 text-emerald-700",
 }
 
 interface EventWizardProps {
@@ -68,6 +70,7 @@ interface EventWizardProps {
         client_id: string | null
         location: string | null
         notes: string | null
+        status?: string
         equipment: SelectedEquipment[]
     }
 }
@@ -142,6 +145,7 @@ export function EventWizard({ equipment, clients, initialData }: EventWizardProp
     const [notes, setNotes] = useState(initialData?.notes || "")
     const [selectedClientId, setSelectedClientId] = useState<string>(initialData?.client_id || "")
     const [location, setLocation] = useState(initialData?.location || "")
+    const [status, setStatus] = useState(initialData?.status || "draft")
 
     // Equipment state
     const [searchQuery, setSearchQuery] = useState("")
@@ -215,6 +219,7 @@ export function EventWizard({ equipment, clients, initialData }: EventWizardProp
                 client_id: selectedClientId && selectedClientId !== "none" ? selectedClientId : null,
                 location,
                 notes,
+                status,
                 equipment: selectedEquipment.map(s => ({
                     equipment_id: s.equipment.id,
                     quantity: s.quantity,
@@ -311,6 +316,20 @@ export function EventWizard({ equipment, clients, initialData }: EventWizardProp
                                     </div>
                                 </div>
                                 <div className="grid gap-2">
+                                    <Label>Stato Evento</Label>
+                                    <Select value={status} onValueChange={setStatus}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="draft">Bozza</SelectItem>
+                                            <SelectItem value="confirmed">Confermato</SelectItem>
+                                            <SelectItem value="completed">Completato</SelectItem>
+                                            <SelectItem value="cancelled">Annullato</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="grid gap-2">
                                     <Label>Note Interne</Label>
                                     <Textarea placeholder="Annotazioni specifiche per il service..." value={notes} onChange={e => setNotes(e.target.value)} />
                                 </div>
@@ -373,6 +392,7 @@ export function EventWizard({ equipment, clients, initialData }: EventWizardProp
                                             <SelectItem value="luci">Luci</SelectItem>
                                             <SelectItem value="video">Video</SelectItem>
                                             <SelectItem value="strutture">Strutture</SelectItem>
+                                            <SelectItem value="servizio">Servizio</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

@@ -1,10 +1,25 @@
 import { getEquipmentById } from "@/app/actions/equipmentDetail"
+import { getMaintenanceList } from "@/app/actions/maintenance"
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Pencil, ArrowLeft, QrCode, FileText } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Pencil, ArrowLeft, QrCode, FileText, Weight, Zap, ShieldCheck, Euro, Calendar, Wrench } from "lucide-react"
 import Link from "next/link"
+import { format } from "date-fns"
+import { it } from "date-fns/locale"
+import MaintenanceSection from "./maintenance-section"
+import DeleteEquipmentButton from "./delete-button"
+
+function getConditionBadge(condition: string) {
+    switch (condition) {
+        case 'ottimo': return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">✅ Ottimo</Badge>
+        case 'buono': return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">🟡 Buono</Badge>
+        case 'da_revisionare': return <Badge className="bg-red-100 text-red-700 hover:bg-red-100">🔴 Da Revisionare</Badge>
+        default: return <Badge variant="outline">-</Badge>
+    }
+}
 
 export default async function EquipmentDetailPage({ params }: { params: { id: string } }) {
     const equipment = await getEquipmentById(params.id)
@@ -12,6 +27,9 @@ export default async function EquipmentDetailPage({ params }: { params: { id: st
     if (!equipment) {
         notFound()
     }
+
+    const maintenanceResult = await getMaintenanceList(params.id)
+    const maintenanceList = 'error' in maintenanceResult ? [] : maintenanceResult.data
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
@@ -22,8 +40,16 @@ export default async function EquipmentDetailPage({ params }: { params: { id: st
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                     </Button>
-                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">{equipment.name}</h1>
-                    <Badge variant="secondary" className="capitalize">{equipment.category}</Badge>
+                    <div>
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-2xl font-bold tracking-tight text-slate-900">{equipment.name}</h1>
+                            <Badge variant="secondary" className="capitalize">{equipment.category}</Badge>
+                            {equipment.subcategory && <Badge variant="outline" className="capitalize text-slate-500">{equipment.subcategory}</Badge>}
+                        </div>
+                        {equipment.brand_model && (
+                            <p className="text-sm text-slate-500 mt-1">{equipment.brand_model}</p>
+                        )}
+                    </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="outline">
@@ -34,66 +60,190 @@ export default async function EquipmentDetailPage({ params }: { params: { id: st
                             <Pencil className="mr-2 h-4 w-4" /> Modifica
                         </Link>
                     </Button>
+                    <DeleteEquipmentButton id={equipment.id} />
                 </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">Dettagli</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div>
-                            <dt className="text-sm font-medium text-slate-500">Tipologia Tracciamento</dt>
-                            <dd className="mt-1 text-base text-slate-900 capitalize">
-                                {equipment.track_type === 'unique' ? 'Pezzo Singolo (S/N)' :
-                                    equipment.track_type === 'bulk' ? 'Quantità' : 'Kit'}
-                            </dd>
-                        </div>
-                        <div>
-                            <dt className="text-sm font-medium text-slate-500">Prezzo Noleggio Giornaliero</dt>
-                            <dd className="mt-1 text-base text-slate-900">€ {equipment.daily_rental_price.toFixed(2)}</dd>
-                        </div>
-                        {equipment.brand_model && (
-                            <div>
-                                <dt className="text-sm font-medium text-slate-500">Tipologia / Modello</dt>
-                                <dd className="mt-1 text-base text-slate-900">{equipment.brand_model}</dd>
-                            </div>
+            <Tabs defaultValue="details" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+                    <TabsTrigger value="details">Dettagli</TabsTrigger>
+                    <TabsTrigger value="specs">Specifiche</TabsTrigger>
+                    <TabsTrigger value="maintenance">
+                        Manutenzione
+                        {maintenanceList.filter((m: any) => !m.resolved_at).length > 0 && (
+                            <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-red-500 text-white">
+                                {maintenanceList.filter((m: any) => !m.resolved_at).length}
+                            </span>
                         )}
-                        {equipment.serial_number && (
-                            <div>
-                                <dt className="text-sm font-medium text-slate-500">Numero Seriale</dt>
-                                <dd className="mt-1 text-base text-slate-900 font-mono">{equipment.serial_number}</dd>
-                            </div>
-                        )}
-                        {equipment.document_url && (
-                            <div className="pt-2">
-                                <Button variant="outline" size="sm" asChild className="text-teal-700 border-teal-200 bg-teal-50 hover:bg-teal-100">
-                                    <a href={equipment.document_url} target="_blank" rel="noopener noreferrer">
-                                        <FileText className="mr-2 h-4 w-4" /> Visualizza Scheda Tecnica
-                                    </a>
-                                </Button>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                    </TabsTrigger>
+                </TabsList>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">Disponibilità</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
-                            <div>
-                                <p className="text-sm font-medium text-slate-500">Attualmente in magazzino</p>
-                                <p className="text-3xl font-bold text-emerald-600">
-                                    {equipment.current_available} <span className="text-lg font-normal text-slate-500">/ {equipment.total_quantity}</span>
-                                </p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+                {/* Tab Dettagli */}
+                <TabsContent value="details" className="mt-6">
+                    <div className="grid gap-6 md:grid-cols-2">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg">Informazioni Generali</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div>
+                                    <dt className="text-sm font-medium text-slate-500">Tipologia Tracciamento</dt>
+                                    <dd className="mt-1 text-base text-slate-900 capitalize">
+                                        {equipment.track_type === 'unique' ? 'Pezzo Singolo (S/N)' :
+                                            equipment.track_type === 'bulk' ? 'Quantità' : 'Kit'}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt className="text-sm font-medium text-slate-500">Condizione</dt>
+                                    <dd className="mt-1">{getConditionBadge(equipment.condition)}</dd>
+                                </div>
+                                <div>
+                                    <dt className="text-sm font-medium text-slate-500">Prezzo Noleggio Giornaliero</dt>
+                                    <dd className="mt-1 text-base text-slate-900">€ {parseFloat(equipment.daily_rental_price).toFixed(2)}</dd>
+                                </div>
+                                {equipment.serial_number && (
+                                    <div>
+                                        <dt className="text-sm font-medium text-slate-500">Numero Seriale</dt>
+                                        <dd className="mt-1 text-base text-slate-900 font-mono">{equipment.serial_number}</dd>
+                                    </div>
+                                )}
+                                {equipment.document_url && (
+                                    <div className="pt-2">
+                                        <Button variant="outline" size="sm" asChild className="text-teal-700 border-teal-200 bg-teal-50 hover:bg-teal-100">
+                                            <a href={equipment.document_url} target="_blank" rel="noopener noreferrer">
+                                                <FileText className="mr-2 h-4 w-4" /> Visualizza Scheda Tecnica
+                                            </a>
+                                        </Button>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg">Disponibilità</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-500">Attualmente in magazzino</p>
+                                        <p className="text-3xl font-bold text-emerald-600">
+                                            {equipment.current_available} <span className="text-lg font-normal text-slate-500">/ {equipment.total_quantity}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                {/* Progress bar */}
+                                <div>
+                                    <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                        <span>Utilizzo</span>
+                                        <span>{Math.round(((equipment.total_quantity - equipment.current_available) / equipment.total_quantity) * 100)}%</span>
+                                    </div>
+                                    <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-teal-500 rounded-full transition-all"
+                                            style={{ width: `${((equipment.total_quantity - equipment.current_available) / equipment.total_quantity) * 100}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </TabsContent>
+
+                {/* Tab Specifiche Tecniche */}
+                <TabsContent value="specs" className="mt-6">
+                    <div className="grid gap-6 md:grid-cols-2">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                    <Wrench className="h-5 w-5 text-slate-400" />
+                                    Dati Tecnici
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="p-3 bg-slate-50 rounded-lg">
+                                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
+                                            <Weight className="h-3 w-3" />
+                                            Peso
+                                        </div>
+                                        <p className="text-lg font-semibold text-slate-800">
+                                            {equipment.weight_kg ? `${equipment.weight_kg} kg` : '—'}
+                                        </p>
+                                    </div>
+                                    <div className="p-3 bg-slate-50 rounded-lg">
+                                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
+                                            <Zap className="h-3 w-3 text-amber-500" />
+                                            Consumo
+                                        </div>
+                                        <p className="text-lg font-semibold text-slate-800">
+                                            {equipment.power_consumption_w ? `${equipment.power_consumption_w} W` : '—'}
+                                        </p>
+                                    </div>
+                                </div>
+                                {equipment.notes_maintenance && (
+                                    <div>
+                                        <dt className="text-sm font-medium text-slate-500 mb-1">Note Tecniche</dt>
+                                        <dd className="text-sm text-slate-700 whitespace-pre-wrap p-3 bg-slate-50 rounded-lg">
+                                            {equipment.notes_maintenance}
+                                        </dd>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                    <Euro className="h-5 w-5 text-slate-400" />
+                                    Dati Economici
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="p-3 bg-slate-50 rounded-lg">
+                                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
+                                            <Euro className="h-3 w-3" />
+                                            Prezzo Acquisto
+                                        </div>
+                                        <p className="text-lg font-semibold text-slate-800">
+                                            {equipment.purchase_price ? `€ ${parseFloat(equipment.purchase_price).toFixed(2)}` : '—'}
+                                        </p>
+                                    </div>
+                                    <div className="p-3 bg-slate-50 rounded-lg">
+                                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
+                                            <Calendar className="h-3 w-3" />
+                                            Data Acquisto
+                                        </div>
+                                        <p className="text-lg font-semibold text-slate-800">
+                                            {equipment.purchase_date
+                                                ? format(new Date(equipment.purchase_date), "dd/MM/yyyy")
+                                                : '—'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                                    <div className="flex items-center gap-1.5 text-xs text-emerald-600 mb-1">
+                                        <ShieldCheck className="h-3 w-3" />
+                                        Valore Assicurativo
+                                    </div>
+                                    <p className="text-lg font-semibold text-emerald-800">
+                                        {equipment.insurance_value ? `€ ${parseFloat(equipment.insurance_value).toFixed(2)}` : '—'}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </TabsContent>
+
+                {/* Tab Manutenzione */}
+                <TabsContent value="maintenance" className="mt-6">
+                    <MaintenanceSection
+                        equipmentId={equipment.id}
+                        maintenanceList={maintenanceList}
+                    />
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }

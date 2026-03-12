@@ -7,13 +7,24 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Link from "next/link"
-import { AlertCircle, FileText } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { AlertCircle, FileText, Wrench, Weight, Zap, ShieldCheck, Euro } from "lucide-react"
+
+const SUBCATEGORIES: Record<string, string[]> = {
+    audio: ['Mixer', 'Casse', 'Amplificatori', 'Microfoni', 'Cavi Audio', 'DI Box', 'Monitor', 'Processori', 'Subwoofer', 'In-Ear', 'Altro'],
+    luci: ['Fari LED', 'Moving Head', 'Dimmer', 'Controller DMX', 'Americane', 'Strobo', 'Barre LED', 'Laser', 'Follow Spot', 'Altro'],
+    video: ['Proiettori', 'Schermi', 'LED Wall', 'Videocamere', 'Switcher', 'Monitor Video', 'Media Server', 'Altro'],
+    strutture: ['Trussi', 'Palchi', 'Transenne', 'Gazebo', 'Pedane', 'Torri', 'Tetti', 'Ground Support', 'Altro'],
+    servizio: ['Generatori', 'Cavi Elettrici', 'Multiprese', 'Rack', 'Flight case', 'Carrelli', 'Altro'],
+}
 
 export default function EditEquipmentForm({ equipment }: { equipment: any }) {
     const [trackType, setTrackType] = useState(equipment.track_type)
+    const [category, setCategory] = useState(equipment.category)
     const [error, setError] = useState<string | null>(null)
     const [isPending, setIsPending] = useState(false)
+
+    const router = require('next/navigation').useRouter()
 
     const handleSubmit = async (formData: FormData) => {
         setIsPending(true)
@@ -24,6 +35,8 @@ export default function EditEquipmentForm({ equipment }: { equipment: any }) {
             if (result?.error) {
                 setError(result.error)
                 setIsPending(false)
+            } else {
+                router.push(`/equipment/${equipment.id}`)
             }
         } catch (err) {
             setError("Si è verificato un errore inaspettato")
@@ -32,120 +45,212 @@ export default function EditEquipmentForm({ equipment }: { equipment: any }) {
     }
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Dettagli Articolo</CardTitle>
-            </CardHeader>
-            <CardContent>
-                {error && (
-                    <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
-                        <AlertCircle className="h-4 w-4" />
-                        <p className="text-sm font-medium">{error}</p>
-                    </div>
-                )}
+        <form action={handleSubmit} className="space-y-6">
+            {error && (
+                <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
+                    <AlertCircle className="h-4 w-4" />
+                    <p className="text-sm font-medium">{error}</p>
+                </div>
+            )}
 
-                <form action={handleSubmit} className="space-y-6">
-                    <div className="space-y-4">
+            {/* Informazioni Base */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Informazioni Base</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="name">Nome Articolo *</Label>
+                        <Input id="name" name="name" required defaultValue={equipment.name} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="brand_model">Marca / Modello</Label>
+                        <Input id="brand_model" name="brand_model" defaultValue={equipment.brand_model || ''} placeholder="Es. L-Acoustics K2" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Nome Articolo</Label>
-                            <Input id="name" name="name" required defaultValue={equipment.name} />
+                            <Label htmlFor="category">Categoria *</Label>
+                            <Select name="category" defaultValue={equipment.category} onValueChange={setCategory}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Seleziona..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="audio">🔊 Audio</SelectItem>
+                                    <SelectItem value="luci">💡 Luci</SelectItem>
+                                    <SelectItem value="video">📺 Video</SelectItem>
+                                    <SelectItem value="strutture">🏗️ Strutture</SelectItem>
+                                    <SelectItem value="servizio">⚡ Servizio</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="category">Categoria</Label>
-                                <Select name="category" defaultValue={equipment.category}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Seleziona..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="audio">Audio</SelectItem>
-                                        <SelectItem value="luci">Luci</SelectItem>
-                                        <SelectItem value="video">Video</SelectItem>
-                                        <SelectItem value="strutture">Strutture</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="track_type">Tracciamento</Label>
-                                <Select name="track_type" defaultValue={trackType} onValueChange={setTrackType}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Seleziona..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="unique">Pezzo Singolo (S/N)</SelectItem>
-                                        <SelectItem value="bulk">Quantità</SelectItem>
-                                        <SelectItem value="kit">Kit</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        {/* Campi condizionali per tracciamento Singolo */}
-                        {trackType === 'unique' && (
-                            <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-4">
-                                <h4 className="font-semibold text-sm text-slate-800">Dettagli Pezzo Singolo</h4>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="brand_model">Tipologia / Modello</Label>
-                                        <Input id="brand_model" name="brand_model" defaultValue={equipment.brand_model || ''} placeholder="Es. QL5 Digital Console" />
-                                    </div>
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="serial_number">Numero di Serie</Label>
-                                        <Input id="serial_number" name="serial_number" defaultValue={equipment.serial_number || ''} placeholder="Es. SN-123456789" />
-                                    </div>
-                                </div>
-
-                                <div className="grid gap-2 pt-2">
-                                    <Label htmlFor="document">Scheda Tecnica / Documento (PDF)</Label>
-                                    <div className="flex items-center gap-3">
-                                        <Input id="document" name="document" type="file" accept=".pdf,.doc,.docx" className="flex-1" />
-                                        {equipment.document_url && (
-                                            <Button variant="outline" size="icon" type="button" asChild title="Visualizza documento attuale">
-                                                <a href={equipment.document_url} target="_blank" rel="noopener noreferrer">
-                                                    <FileText className="h-4 w-4 text-teal-600" />
-                                                </a>
-                                            </Button>
-                                        )}
-                                    </div>
-                                    <p className="text-xs text-slate-500">
-                                        {equipment.document_url
-                                            ? "Carica un nuovo file per sostituire il documento esistente."
-                                            : "Puoi caricare un file PDF contenente la scheda tecnica, il manuale visivo o la distinta dei componenti."}
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="total_quantity">Quantità Totale</Label>
-                                <Input
-                                    id="total_quantity"
-                                    name="total_quantity"
-                                    type="number"
-                                    min="1"
-                                    defaultValue={trackType === 'unique' ? 1 : equipment.total_quantity}
-                                    readOnly={trackType === 'unique'}
-                                    className={trackType === 'unique' ? 'bg-slate-100 text-slate-500' : ''}
-                                    required
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="daily_rental_price">Prezzo Noleggio Giornaliero (€)</Label>
-                                <Input id="daily_rental_price" name="daily_rental_price" type="number" step="0.01" min="0" defaultValue={equipment.daily_rental_price} required />
-                            </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="subcategory">Sottocategoria</Label>
+                            <Select name="subcategory" key={category} defaultValue={equipment.subcategory || undefined}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Seleziona..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {(SUBCATEGORIES[category] || []).map((sub) => (
+                                        <SelectItem key={sub} value={sub.toLowerCase()}>{sub}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full bg-teal-500 hover:bg-teal-600" disabled={isPending}>
-                        {isPending ? 'Salvataggio in corso...' : 'Salva Modifiche'}
-                    </Button>
-                </form>
-            </CardContent>
-        </Card>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="track_type">Tracciamento *</Label>
+                            <Select name="track_type" defaultValue={trackType} onValueChange={setTrackType}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Seleziona..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="unique">Pezzo Singolo (S/N)</SelectItem>
+                                    <SelectItem value="bulk">Quantità</SelectItem>
+                                    <SelectItem value="kit">Kit</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="condition">Condizione</Label>
+                            <Select name="condition" defaultValue={equipment.condition || 'ottimo'}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Seleziona..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="ottimo">✅ Ottimo</SelectItem>
+                                    <SelectItem value="buono">🟡 Buono</SelectItem>
+                                    <SelectItem value="da_revisionare">🔴 Da Revisionare</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
+                    {/* Campi condizionali per tracciamento Singolo */}
+                    {trackType === 'unique' && (
+                        <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-4">
+                            <h4 className="font-semibold text-sm text-slate-800">Dettagli Pezzo Singolo</h4>
+                            <div className="grid gap-2">
+                                <Label htmlFor="serial_number">Numero di Serie</Label>
+                                <Input id="serial_number" name="serial_number" defaultValue={equipment.serial_number || ''} placeholder="Es. SN-123456789" />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="document">Scheda Tecnica / Documento (PDF)</Label>
+                                <div className="flex items-center gap-3">
+                                    <Input id="document" name="document" type="file" accept=".pdf,.doc,.docx" className="flex-1" />
+                                    {equipment.document_url && (
+                                        <Button variant="outline" size="icon" type="button" asChild title="Visualizza documento attuale">
+                                            <a href={equipment.document_url} target="_blank" rel="noopener noreferrer">
+                                                <FileText className="h-4 w-4 text-teal-600" />
+                                            </a>
+                                        </Button>
+                                    )}
+                                </div>
+                                <p className="text-xs text-slate-500">
+                                    {equipment.document_url
+                                        ? "Carica un nuovo file per sostituire il documento esistente."
+                                        : "Puoi caricare un file PDF."}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="total_quantity">Quantità Totale *</Label>
+                            <Input
+                                id="total_quantity"
+                                name="total_quantity"
+                                type="number"
+                                min="1"
+                                defaultValue={trackType === 'unique' ? 1 : equipment.total_quantity}
+                                readOnly={trackType === 'unique'}
+                                className={trackType === 'unique' ? 'bg-slate-100 text-slate-500' : ''}
+                                required
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="daily_rental_price">Prezzo Noleggio/GG (€) *</Label>
+                            <Input id="daily_rental_price" name="daily_rental_price" type="number" step="0.01" min="0" defaultValue={equipment.daily_rental_price} required />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Specifiche Tecniche */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Wrench className="h-5 w-5 text-slate-400" />
+                        Specifiche Tecniche
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="weight_kg" className="flex items-center gap-1.5">
+                                <Weight className="h-3.5 w-3.5 text-slate-400" />
+                                Peso (kg)
+                            </Label>
+                            <Input id="weight_kg" name="weight_kg" type="number" step="0.1" min="0" defaultValue={equipment.weight_kg || ''} placeholder="Es. 12.5" />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="power_consumption_w" className="flex items-center gap-1.5">
+                                <Zap className="h-3.5 w-3.5 text-amber-500" />
+                                Consumo (Watt)
+                            </Label>
+                            <Input id="power_consumption_w" name="power_consumption_w" type="number" min="0" defaultValue={equipment.power_consumption_w || ''} placeholder="Es. 350" />
+                        </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="notes_maintenance">Note Tecniche / Manutenzione</Label>
+                        <Textarea id="notes_maintenance" name="notes_maintenance" defaultValue={equipment.notes_maintenance || ''} placeholder="Appunti sulla manutenzione, particolarità..." rows={3} />
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Dati Economici */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Euro className="h-5 w-5 text-slate-400" />
+                        Dati Economici
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="purchase_price">Prezzo Acquisto (€)</Label>
+                            <Input id="purchase_price" name="purchase_price" type="number" step="0.01" min="0" defaultValue={equipment.purchase_price || ''} placeholder="Es. 2500.00" />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="purchase_date">Data Acquisto</Label>
+                            <Input id="purchase_date" name="purchase_date" type="date" defaultValue={equipment.purchase_date || ''} />
+                        </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="insurance_value" className="flex items-center gap-1.5">
+                            <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                            Valore Assicurativo (€)
+                        </Label>
+                        <Input id="insurance_value" name="insurance_value" type="number" step="0.01" min="0" defaultValue={equipment.insurance_value || ''} placeholder="Es. 3000.00" />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Button type="submit" className="w-full bg-teal-500 hover:bg-teal-600" disabled={isPending}>
+                {isPending ? 'Salvataggio in corso...' : 'Salva Modifiche'}
+            </Button>
+        </form>
     )
 }

@@ -51,13 +51,17 @@ export async function getEventById(id: string) {
       id,
       quantity,
       is_loaded,
+      loaded_at,
       is_returned,
+      returned_at,
+      condition_on_return,
       equipment (
         id,
         name,
         category,
         track_type,
         serial_number,
+        brand_model,
         daily_rental_price
       )
     `)

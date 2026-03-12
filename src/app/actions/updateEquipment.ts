@@ -2,7 +2,6 @@
 
 import { createClient } from "@/utils/supabase/server"
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
 
 export async function updateEquipment(id: string, formData: FormData) {
     const supabase = await createClient()
@@ -10,6 +9,7 @@ export async function updateEquipment(id: string, formData: FormData) {
     const name = formData.get('name') as string
     const category = formData.get('category') as string
     const track_type = formData.get('track_type') as string
+    const subcategory = formData.get('subcategory') as string || null
 
     // For unique items, quantity is forced to 1
     const total_quantity = track_type === 'unique' ? 1 : (parseInt(formData.get('total_quantity') as string) || 1)
@@ -18,15 +18,32 @@ export async function updateEquipment(id: string, formData: FormData) {
     const brand_model = formData.get('brand_model') as string || null
     const serial_number = formData.get('serial_number') as string || null
 
+    // New advanced fields
+    const condition = formData.get('condition') as string || 'ottimo'
+    const weight_kg = formData.get('weight_kg') ? parseFloat(formData.get('weight_kg') as string) : null
+    const power_consumption_w = formData.get('power_consumption_w') ? parseInt(formData.get('power_consumption_w') as string) : null
+    const purchase_price = formData.get('purchase_price') ? parseFloat(formData.get('purchase_price') as string) : null
+    const insurance_value = formData.get('insurance_value') ? parseFloat(formData.get('insurance_value') as string) : null
+    const purchase_date = formData.get('purchase_date') as string || null
+    const notes_maintenance = formData.get('notes_maintenance') as string || null
+
     // Prepare update payload
     const updatePayload: any = {
         name,
         category,
+        subcategory,
         track_type,
         total_quantity,
         daily_rental_price,
-        brand_model: track_type === 'unique' ? brand_model : null,
+        brand_model,
         serial_number: track_type === 'unique' ? serial_number : null,
+        condition,
+        weight_kg,
+        power_consumption_w,
+        purchase_price,
+        insurance_value,
+        purchase_date: purchase_date || null,
+        notes_maintenance,
     }
 
     // Handle document upload if present
@@ -75,5 +92,6 @@ export async function updateEquipment(id: string, formData: FormData) {
 
     revalidatePath('/equipment')
     revalidatePath(`/equipment/${id}`)
-    redirect(`/equipment/${id}`)
+    
+    return { success: true }
 }

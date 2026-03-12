@@ -1,0 +1,105 @@
+/* Calendar Custom Overrides per ServicePro (Stile "Unified Agenda Aesthetic") */
+
+.rbc-month-view, .rbc-time-view, .rbc-agenda-view {
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    font-family: inherit;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Headers della Settimana (LUN, MAR, MER...) */
+.rbc-header {
+    border-bottom: 1px solid #f1f5f9 !important;
+    border-left: none !important;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 16px 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+}
+
+.rbc-month-header {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* Griglia Mese */
+.rbc-month-row {
+    border-top: 1px solid #f8fafc;
+}
+.rbc-month-row:first-of-type {
+    border-top: none; /* Already has header border underneath */
+}
+
+/* Sfondo Celle Giornali */
+.rbc-day-bg {
+    border-left: 1px solid #f8fafc;
+}
+.rbc-day-bg:first-child {
+    border-left: none; /* remove outside border */
+}
+
+.rbc-off-range-bg {
+    background-color: #fcfcfc;
+}
+
+.rbc-today {
+    background-color: transparent !important; /* Rimuoviamo quello standard perché usiamo il pallino colorato */
+}
+
+/* Fix per gli eventi Custom */
+.rbc-event {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.rbc-row-segment {
+    padding: 0 2px !important;
+}
+
+/* Fix per la formattazione testuale nelle celle */
+.rbc-date-cell {
+    padding: 8px 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #475569;
+    text-align: left; /* Allinea a sinistra */
+}
+.rbc-off-range .rbc-date-cell {
+    color: #cbd5e1;
+}
+
+/* Nascondiamo alcuni bordi pesanti default in RBC Agenda/Weekly */
+.rbc-time-header.rbc-overflowing {
+    border-right: none;
+}
+.rbc-time-header-content {
+    border-left: none;
+}
+.rbc-time-content {
+    border-top: 1px solid #f1f5f9;
+}
+.rbc-timeslot-group {
+    border-bottom: 1px solid #f8fafc;
+}
+
+/* Agenda View Reset */
+.rbc-agenda-view table.rbc-agenda-table tbody > tr > td {
+    padding: 12px;
+}
+.rbc-agenda-time-cell {
+    text-transform: lowercase;
+    color: #64748b;
+    font-weight: 500;
+}
+.rbc-agenda-date-cell {
+    font-weight: 600;
+    color: #334155;
+}
