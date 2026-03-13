@@ -39,7 +39,10 @@ export default function PackingListInteractive({
 
     const handleToggleLoaded = async (item: PackingItem) => {
         setLoadingIds(prev => new Set(prev).add(item.id))
-        await toggleEquipmentLoaded(item.id, eventId, !item.is_loaded)
+        const res = await toggleEquipmentLoaded(item.id, eventId, !item.is_loaded)
+        if (res?.error) {
+            alert(res.error)
+        }
         setLoadingIds(prev => {
             const next = new Set(prev)
             next.delete(item.id)
@@ -50,7 +53,10 @@ export default function PackingListInteractive({
     const handleToggleReturned = async (item: PackingItem) => {
         setLoadingIds(prev => new Set(prev).add(item.id))
         const condition = returnConditions[item.id] || 'ottimo'
-        await toggleEquipmentReturned(item.id, eventId, !item.is_returned, condition)
+        const res = await toggleEquipmentReturned(item.id, eventId, !item.is_returned, condition)
+        if (res?.error) {
+            alert(res.error)
+        }
         setLoadingIds(prev => {
             const next = new Set(prev)
             next.delete(item.id)
@@ -80,16 +86,16 @@ export default function PackingListInteractive({
                         />
                     </div>
                 </div>
-                <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                <div className="p-3 bg-teal-50 border border-teal-200 rounded-lg">
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-indigo-800 flex items-center gap-1.5">
+                        <span className="text-sm font-medium text-teal-800 flex items-center gap-1.5">
                             <RotateCcw className="h-4 w-4" /> Rientrati
                         </span>
-                        <span className="text-lg font-bold text-indigo-800">{returnedCount}/{totalItems}</span>
+                        <span className="text-lg font-bold text-teal-800">{returnedCount}/{totalItems}</span>
                     </div>
-                    <div className="w-full h-1.5 bg-indigo-200 rounded-full overflow-hidden mt-2">
+                    <div className="w-full h-1.5 bg-teal-200 rounded-full overflow-hidden mt-2">
                         <div
-                            className="h-full bg-indigo-500 rounded-full transition-all"
+                            className="h-full bg-teal-500 rounded-full transition-all"
                             style={{ width: totalItems > 0 ? `${(returnedCount / totalItems) * 100}%` : '0%' }}
                         />
                     </div>
@@ -176,8 +182,8 @@ export default function PackingListInteractive({
                                                 size="sm"
                                                 variant={item.is_returned ? "default" : "outline"}
                                                 className={item.is_returned
-                                                    ? "bg-indigo-500 hover:bg-indigo-600 text-white h-8 w-8 p-0"
-                                                    : "h-8 w-8 p-0 text-slate-400 hover:text-indigo-600 hover:border-indigo-300"
+                                                    ? "bg-teal-500 hover:bg-teal-600 text-white h-8 w-8 p-0"
+                                                    : "h-8 w-8 p-0 text-slate-400 hover:text-teal-600 hover:border-teal-300"
                                                 }
                                                 onClick={() => handleToggleReturned(item)}
                                                 disabled={loadingIds.has(item.id) || !item.is_loaded}

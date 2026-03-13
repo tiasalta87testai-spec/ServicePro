@@ -11,6 +11,7 @@ import { it } from "date-fns/locale"
 import { ScannerPlaceholder } from "./scanner"
 import { GenerateQuoteButtonWrapper } from "@/components/GenerateQuoteButtonWrapper"
 import PackingListInteractive from "./packing-list-interactive"
+import { DeleteEventButton } from "./delete-button"
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
     const result = await getEventById(params.id)
@@ -25,7 +26,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
         switch (status) {
             case 'draft': return <Badge variant="outline" className="text-slate-600 bg-slate-50">Bozza</Badge>
             case 'confirmed': return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Confermato</Badge>
-            case 'completed': return <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100">Completato</Badge>
+            case 'completed': return <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-100">Completato</Badge>
             case 'cancelled': return <Badge className="bg-red-100 text-red-700 hover:bg-red-100">Annullato</Badge>
             default: return <Badge variant="outline">{status}</Badge>
         }
@@ -74,6 +75,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
                             <Edit className="mr-2 h-4 w-4" /> Modifica
                         </Link>
                     </Button>
+                    <DeleteEventButton id={event.id} name={event.name} />
                 </div>
             </div>
 

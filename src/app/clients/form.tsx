@@ -81,7 +81,7 @@ export function ClientForm({ initialData }: { initialData?: Client }) {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="company"><Building2 className="w-4 h-4 inline mr-2" /> Azienda</SelectItem>
-                                        <SelectItem value="agency"><Building2 className="w-4 h-4 inline mr-2 text-fuchsia-600" /> Agenzia</SelectItem>
+                                        <SelectItem value="agency"><Building2 className="w-4 h-4 inline mr-2 text-sky-600" /> Agenzia</SelectItem>
                                         <SelectItem value="private"><User className="w-4 h-4 inline mr-2" /> Privato</SelectItem>
                                     </SelectContent>
                                 </Select>

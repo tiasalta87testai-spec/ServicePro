@@ -105,7 +105,7 @@ export const columns: ColumnDef<Equipment>[] = [
         header: "Tipologia",
         cell: ({ row }) => {
             const type = row.getValue("track_type") as string
-            if (type === 'unique') return <Badge variant="outline" className="text-indigo-600 border-indigo-200 bg-indigo-50">Singolo</Badge>
+            if (type === 'unique') return <Badge variant="outline" className="text-teal-600 border-teal-200 bg-teal-50">Singolo</Badge>
             if (type === 'bulk') return <Badge variant="outline" className="text-emerald-600 border-emerald-200 bg-emerald-50">Quantità</Badge>
             if (type === 'kit') return <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50">Kit</Badge>
             return null
@@ -134,7 +134,7 @@ export const columns: ColumnDef<Equipment>[] = [
                 return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">In Manutenzione</Badge>
             }
 
-            if (avail === 0) {
+            if (avail <= 0) {
                 return <Badge className="bg-red-100 text-red-700 hover:bg-red-100">Esaurito ({avail}/{total})</Badge>
             }
 

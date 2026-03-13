@@ -54,7 +54,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
 const categoryColors: Record<string, string> = {
     audio: "bg-blue-100 text-blue-700",
     luci: "bg-amber-100 text-amber-700",
-    video: "bg-purple-100 text-purple-700",
+    video: "bg-cyan-100 text-cyan-700",
     strutture: "bg-slate-100 text-slate-700",
     servizio: "bg-emerald-100 text-emerald-700",
 }

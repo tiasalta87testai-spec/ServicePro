@@ -28,8 +28,8 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
                         <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
                             {client.company_name || client.name}
                             <Badge variant="outline" className={
-                                client.client_type === 'company' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
-                                    client.client_type === 'agency' ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200' :
+                                client.client_type === 'company' ? 'bg-teal-50 text-teal-700 border-teal-200' :
+                                    client.client_type === 'agency' ? 'bg-sky-50 text-sky-700 border-sky-200' :
                                         'bg-emerald-50 text-emerald-700 border-emerald-200'
                             }>
                                 {client.client_type === 'company' ? 'Azienda' : client.client_type === 'agency' ? 'Agenzia' : 'Privato'}

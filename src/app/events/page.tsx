@@ -37,7 +37,7 @@ export default async function EventsPage() {
         switch (status) {
             case 'draft': return <Badge variant="outline" className="text-slate-600 bg-slate-50">Bozza</Badge>
             case 'confirmed': return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Confermato</Badge>
-            case 'completed': return <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100">Completato</Badge>
+            case 'completed': return <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-100">Completato</Badge>
             case 'cancelled': return <Badge className="bg-red-100 text-red-700 hover:bg-red-100">Annullato</Badge>
             default: return <Badge variant="outline">{status}</Badge>
         }

@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* ============================================
+   GearFlow PWA – iOS Glassmorphism Theme
+   ============================================ */
+
+/* Base */
+* { -webkit-tap-highlight-color: transparent; }
+
+html, body, #root {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, sans-serif;
+  background: #0F172A;
+  color: #F8FAFC;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* iOS Safe Areas */
+.safe-top { padding-top: env(safe-area-inset-top, 20px); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 20px); }
+
+/* Glass Card */
+.glass {
+  background: rgba(30, 41, 59, 0.72);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 16px;
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+}
+
+/* Touch Targets */
+.touch-target {
+  min-height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  z-index: 50;
+}
+
+/* Button Primary */
+.btn-primary {
+  background: linear-gradient(135deg, #0D9488, #14B8A6);
+  color: white;
+  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 14px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 48px;
+}
+.btn-primary:active { transform: scale(0.97); opacity: 0.9; }
+
+/* Scrollbar Hide */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Status Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Stock Bar */
+.stock-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: #1E293B;
+  overflow: hidden;
+}
+.stock-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+/* Calendar overrides */
+.react-calendar {
+  background: transparent !important;
+  border: none !important;
+  width: 100% !important;
+  font-family: inherit !important;
+}
+.react-calendar__tile { color: #F8FAFC !important; border-radius: 12px !important; }
+.react-calendar__tile--active { background: #0D9488 !important; color: white !important; }
+.react-calendar__tile--now { background: #1E293B !important; }
+.react-calendar__navigation button { color: #F8FAFC !important; font-size: 16px !important; }
+.react-calendar__month-view__weekdays { color: #64748B !important; font-size: 12px !important; }
+.react-calendar__month-view__weekdays abbr { text-decoration: none !important; }

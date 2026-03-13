@@ -34,7 +34,7 @@ export async function updateEvent(
         for (const item of data.equipment) {
             const { data: eqData } = await supabase
                 .from('equipment')
-                .select('name, current_available')
+                .select('name, total_quantity')
                 .eq('id', item.equipment_id)
                 .single()
 
@@ -47,10 +47,10 @@ export async function updateEvent(
                         p_exclude_event_id: id
                     })
 
-                const actualAvailable = eqData.current_available - (Number(bookedCount) || 0)
+                const actualAvailable = eqData.total_quantity - (Number(bookedCount) || 0)
 
                 if (item.quantity > actualAvailable) {
-                    return { error: `Disponibilità insufficiente per: ${eqData.name}. Richiesti: ${item.quantity}, Disponibili: ${Math.max(0, actualAvailable)}` }
+                    return { error: `Disponibilità insufficiente per: ${eqData.name}. Richiesti: ${item.quantity}, Disponibili per queste date: ${Math.max(0, actualAvailable)}` }
                 }
             }
         }
@@ -158,5 +158,24 @@ export async function updateEvent(
 
     revalidatePath('/events')
     revalidatePath(`/events/${id}`)
+    return { success: true }
+}
+
+export async function deleteEvent(id: string) {
+    const supabase = await createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Non autorizzato' }
+
+    // event_equipment will be deleted automatically if CASCADE is set, 
+    // but better to be explicit or rely on it.
+    const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id)
+
+    if (error) return { error: error.message }
+
+    revalidatePath('/events')
     return { success: true }
 }

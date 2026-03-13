@@ -68,8 +68,8 @@ export default async function ClientsPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <Badge variant="outline" className={
-                                                client.client_type === 'company' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
-                                                    client.client_type === 'agency' ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200' :
+                                                client.client_type === 'company' ? 'bg-teal-50 text-teal-700 border-teal-200' :
+                                                    client.client_type === 'agency' ? 'bg-sky-50 text-sky-700 border-sky-200' :
                                                         'bg-emerald-50 text-emerald-700 border-emerald-200'
                                             }>
                                                 {client.client_type === 'company' ? (

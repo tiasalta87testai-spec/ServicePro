@@ -31,7 +31,7 @@ type TeamMember = {
 }
 
 const roleLabels: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-    super_admin: { label: "Super Admin", color: "bg-purple-100 text-purple-700", icon: <Crown className="h-3 w-3" /> },
+    super_admin: { label: "Super Admin", color: "bg-teal-600 text-white", icon: <Crown className="h-3 w-3" /> },
     admin: { label: "Admin", color: "bg-blue-100 text-blue-700", icon: <Shield className="h-3 w-3" /> },
     manager: { label: "Manager", color: "bg-teal-100 text-teal-700", icon: <Shield className="h-3 w-3" /> },
     technician: { label: "Tecnico", color: "bg-amber-100 text-amber-700", icon: <Wrench className="h-3 w-3" /> },

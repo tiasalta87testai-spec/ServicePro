@@ -32,7 +32,7 @@ export async function createEvent(data: {
         for (const item of data.equipment) {
             const { data: eqData } = await supabase
                 .from('equipment')
-                .select('name, current_available')
+                .select('name, total_quantity')
                 .eq('id', item.equipment_id)
                 .single()
 
@@ -44,10 +44,10 @@ export async function createEvent(data: {
                         p_end_date: data.end_date
                     })
 
-                const actualAvailable = eqData.current_available - (Number(bookedCount) || 0)
+                const actualAvailable = eqData.total_quantity - (Number(bookedCount) || 0)
 
                 if (item.quantity > actualAvailable) {
-                    return { error: `Disponibilità insufficiente per: ${eqData.name}. Richiesti: ${item.quantity}, Disponibili: ${Math.max(0, actualAvailable)}` }
+                    return { error: `Disponibilità insufficiente per: ${eqData.name}. Richiesti: ${item.quantity}, Disponibili per queste date: ${Math.max(0, actualAvailable)}` }
                 }
             }
         }

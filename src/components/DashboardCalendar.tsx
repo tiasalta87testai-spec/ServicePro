@@ -61,7 +61,7 @@ export function DashboardCalendar({ initialEvents = [] }: DashboardCalendarProps
                 backgroundColor = '#10b981' // emerald
                 break
             case 'completed':
-                backgroundColor = '#6366f1' // indigo
+                backgroundColor = '#14b8a6' // teal-500
                 break
             case 'cancelled':
                 backgroundColor = '#ef4444' // red

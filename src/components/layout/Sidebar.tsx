@@ -9,10 +9,21 @@ import {
     Package,
     Settings,
     QrCode,
-    Users
+    Users,
+    LogOut
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { signout } from "@/app/login/actions"
 
 const navigation = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -33,6 +44,30 @@ export function Sidebar() {
                 <span className="text-xl font-bold font-sans text-white tracking-tight">
                     Service<span className="text-teal-400">Pro</span>
                 </span>
+            </div>
+            <div className="p-4 border-b border-slate-700">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="flex items-center gap-3 w-full p-2 rounded-md hover:bg-slate-700/50 transition-colors group focus:outline-none text-left">
+                            <Avatar className="h-9 w-9 ring-2 ring-transparent group-hover:ring-teal-400/50 group-hover:ring-offset-2 group-hover:ring-offset-slate-800 transition-all">
+                                <AvatarImage src="" />
+                                <AvatarFallback className="bg-teal-100 text-teal-700">U</AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col items-start overflow-hidden">
+                                <span className="text-sm font-medium text-white truncate w-full">Utente</span>
+                                <span className="text-xs text-slate-400 truncate w-full">Il mio account</span>
+                            </div>
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" side="right" className="w-56 ml-2 bg-slate-800 border-slate-700 text-white">
+                        <DropdownMenuLabel className="text-slate-400 font-normal">Il mio Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-slate-700" />
+                        <DropdownMenuItem onClick={() => signout()} className="text-red-400 focus:text-red-400 focus:bg-red-400/10 cursor-pointer">
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Esci</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
             <div className="flex-1 overflow-y-auto py-4">
                 <nav className="space-y-1 px-3">
@@ -62,6 +97,7 @@ export function Sidebar() {
                     })}
                 </nav>
             </div>
+
         </div>
     )
 }

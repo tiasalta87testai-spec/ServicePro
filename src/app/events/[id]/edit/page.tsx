@@ -1,4 +1,4 @@
-import { EventWizard } from "@/app/events/new/wizard"
+import { EventForm } from "./event-form"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
@@ -37,7 +37,7 @@ export default async function EditEventPage({ params }: { params: { id: string }
     }
 
     return (
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" asChild>
                     <Link href={`/events/${params.id}`}>
@@ -47,7 +47,7 @@ export default async function EditEventPage({ params }: { params: { id: string }
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900">Modifica Evento</h1>
             </div>
 
-            <EventWizard equipment={equipment} clients={clients} initialData={initialData} />
+            <EventForm equipment={equipment} clients={clients} initialData={initialData} />
         </div>
     )
 }

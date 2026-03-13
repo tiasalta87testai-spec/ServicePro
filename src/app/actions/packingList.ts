@@ -9,6 +9,27 @@ export async function toggleEquipmentLoaded(eventEquipmentId: string, eventId: s
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Non autorizzato' }
 
+    if (isLoaded) {
+        // Find the equipment ID and quantity for this record
+        const { data: eeData } = await supabase
+            .from('event_equipment')
+            .select('equipment_id, quantity')
+            .eq('id', eventEquipmentId)
+            .single()
+
+        if (eeData) {
+            const { data: eqData } = await supabase
+                .from('equipment')
+                .select('name, current_available')
+                .eq('id', eeData.equipment_id)
+                .single()
+
+            if (eqData && eqData.current_available < eeData.quantity) {
+                 return { error: `Impossibile caricare: ${eqData.name} non è disponibile in magazzino (Attualmente in sede: ${eqData.current_available}).` }
+            }
+        }
+    }
+
     const updateData: any = {
         is_loaded: isLoaded,
     }
@@ -31,6 +52,7 @@ export async function toggleEquipmentLoaded(eventEquipmentId: string, eventId: s
     }
 
     revalidatePath(`/events/${eventId}`)
+    revalidatePath('/equipment')
     return { success: true }
 }
 
@@ -64,5 +86,6 @@ export async function toggleEquipmentReturned(
     }
 
     revalidatePath(`/events/${eventId}`)
+    revalidatePath('/equipment')
     return { success: true }
 }
