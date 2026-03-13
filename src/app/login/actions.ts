@@ -37,6 +37,10 @@ export async function loginWithOtp(formData: FormData) {
     })
 
     if (error) {
+        console.error("Magic Link Error:", error.message, error.status)
+        if (error.status === 429) {
+            redirect("/login?error=Troppe richieste. Riprova tra qualche minuto.")
+        }
         redirect("/login?error=Non è stato possibile inviare il link magico")
     }
 
