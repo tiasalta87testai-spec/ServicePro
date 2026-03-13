@@ -81,19 +81,36 @@ export default function CalendarClient({ initialEvents }: CalendarClientProps) {
         }
 
         // Custom Event Renderer
+        // Custom Event Renderer - Stile 1: Minimal Border
         const CustomEvent = ({ event }: any) => {
-            let bgClass = 'bg-slate-200 text-slate-700' // fallback
-            
-            if (event.status === 'draft') bgClass = 'bg-slate-100 border border-slate-200 text-slate-600'
-            if (event.status === 'confirmed') bgClass = 'bg-[#4ADE80] text-white border-none' // teal/green from screenshot
-            if (event.status === 'completed') bgClass = 'bg-[#2DD4BF] text-white border-none'
-            if (event.status === 'cancelled') bgClass = 'bg-red-400 text-white border-none'
-
-            const baseClass = "px-2 py-1 text-xs truncate rounded min-h-[1.5rem] flex items-center font-medium shadow-sm mb-1 mt-0.5 mx-0.5"
+            let borderColor = 'border-slate-300' // draft / fallback
+            if (event.status === 'confirmed') borderColor = 'border-emerald-500'
+            if (event.status === 'completed') borderColor = 'border-teal-500'
+            if (event.status === 'cancelled') borderColor = 'border-red-500'
 
             return (
-                <div className={cn(baseClass, bgClass)} title={event.title}>
-                    <span className="font-bold mr-1">{moment(event.start).format('HH:mm')}</span> {event.title}
+                <div 
+                    className={cn(
+                        "flex flex-col h-full border-l-[3px] bg-white px-2 py-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-200 group rounded-r-md",
+                        borderColor
+                    )} 
+                    title={`${moment(event.start).format('HH:mm')} - ${event.title} (${event.clientName})`}
+                >
+                    <div className="flex items-center gap-1.5 leading-none mb-0.5">
+                        <span className="text-[10px] font-bold text-slate-900 shrink-0">
+                            {moment(event.start).format('HH:mm')}
+                        </span>
+                        <span className="text-[11px] font-semibold text-slate-800 truncate">
+                            {event.title}
+                        </span>
+                    </div>
+                    
+                    {event.clientName && (
+                        <div className="text-[10px] text-slate-500 truncate font-medium flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                            <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0" />
+                            {event.clientName}
+                        </div>
+                    )}
                 </div>
             )
         }
