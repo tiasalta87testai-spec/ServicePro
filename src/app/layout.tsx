@@ -7,13 +7,13 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Service Pro",
+  title: "ServiceProApp",
   description: "Web app SaaS multi-tenant per aziende di service audio/luci/video.",
   manifest: "/manifest.json"
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f172a", // slate-900
+  themeColor: "#2dd4bf", // teal-400
 };
 
 export default function RootLayout({
