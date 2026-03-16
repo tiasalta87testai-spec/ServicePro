@@ -68,108 +68,118 @@
 
 @media (display-mode: standalone) {
   :root {
-    --background: 222.2 84% 4.9%; /* Deep Dark Background for PWA */
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 8.5%;
-    --card-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+    --card: 224 71% 4%;
+    --card-foreground: 213 31% 91%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 171 77% 41%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 47% 11%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+    --ring: 171 77% 41%;
   }
 
   body {
-    background: #0F172A;
+    background-color: #060912 !important;
     background-image: 
-      radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.07) 0, transparent 50%), 
-      radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.07) 0, transparent 50%);
-    color: #F8FAFC;
-    font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, sans-serif;
-    overscroll-behavior: none;
-    letter-spacing: -0.01em;
-  }
-
-  /* Premium Glassmorphism */
-  .glass {
-    background: rgba(30, 41, 59, 0.45) !important;
-    backdrop-filter: blur(20px) saturate(1.8);
-    -webkit-backdrop-filter: blur(20px) saturate(1.8);
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
-  }
-  
-  /* Text adjustments for dark background */
-  .text-slate-900 { color: #F8FAFC !important; }
-  .text-slate-800 { color: #F1F5F9 !important; }
-  .text-slate-500 { color: #94A3B8 !important; }
-  .bg-slate-50 { background-color: transparent !important; }
-  
-  /* Big Calendar Overrides for Dark Mode */
-  .rbc-calendar {
+      radial-gradient(circle at 0% 0%, rgba(45, 212, 191, 0.15) 0%, transparent 40%),
+      radial-gradient(circle at 100% 60%, rgba(139, 92, 246, 0.12) 0%, transparent 40%) !important;
+    background-attachment: fixed !important;
     color: #F8FAFC !important;
   }
-  .rbc-month-view, .rbc-time-view, .rbc-agenda-view {
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    background: rgba(15, 23, 42, 0.3) !important;
+
+  /* Force Dark Mode for all text unless specified */
+  h1, h2, h3, h4, h5, h6, .text-slate-900, .text-slate-800, .text-foreground {
+    color: #FFFFFF !important;
   }
-  .rbc-off-range-bg {
-    background: rgba(255, 255, 255, 0.03) !important;
-  }
-  .rbc-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  
+  .text-slate-500, .text-slate-600, .text-muted-foreground {
     color: #94A3B8 !important;
-    padding: 8px 0 !important;
-    font-size: 0.75rem !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-  }
-  .rbc-day-bg {
-    border-left: 1px solid rgba(255, 255, 255, 0.05) !important;
-  }
-  .rbc-today {
-    background-color: rgba(20, 184, 166, 0.1) !important;
-  }
-  .rbc-toolbar button {
-    color: #F8FAFC !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    background: rgba(30, 41, 59, 0.5) !important;
-  }
-  .rbc-toolbar button:active, .rbc-toolbar button.rbc-active {
-    background: #14B8A6 !important;
-    color: white !important;
-    box-shadow: none !important;
-  }
-  .rbc-toolbar button:hover {
-    background: rgba(30, 41, 59, 0.8) !important;
   }
 
-  /* Hide Sidebar on Mobile App */
+  /* Extreme Glassmorphism */
+  .glass, .card, [class*="rounded-lg"].border.border-slate-200.bg-white {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(25px) saturate(2) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+  }
+
+  /* Override Table Styles (Clients Page) */
+  table, thead, tbody, tr, th, td {
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: #F1F5F9 !important;
+  }
+  
+  thead {
+    background: rgba(255, 255, 255, 0.02) !important;
+  }
+  
+  tr:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  .bg-white { background-color: transparent !important; }
+  .border-slate-200 { border-color: rgba(255, 255, 255, 0.1) !important; }
+  .bg-slate-50 { background-color: rgba(255, 255, 255, 0.02) !important; }
+
+  /* Premium Buttons */
+  .bg-teal-500 {
+    background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%) !important;
+    box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3) !important;
+    border: none !important;
+    border-radius: 12px;
+  }
+
+  /* Badge styling */
+  .badge, [class*="Badge"] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #2DD4BF !important;
+  }
+
+  /* Hide Desktop Elements */
   aside, .hidden.md\:flex.flex-col.w-\[260px\], header.md\:hidden {
     display: none !important;
   }
 
-  /* Reset layout margins */
-  .md\:ml-\[260px\] {
+  /* Mobile App Spacing */
+  main, .md\:ml-\[260px\] {
     margin-left: 0 !important;
+    padding: 1.5rem !important;
+    padding-top: calc(env(safe-area-inset-top, 20px) + 1.5rem) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 6rem) !important;
   }
-  
-  /* Safe Areas */
-  .safe-top { padding-top: env(safe-area-inset-top, 20px); }
-  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 20px); }
 
-  /* App Specific Navigation */
+  /* Navigation Bar */
   .app-bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(15, 23, 42, 0.8) !important;
-    backdrop-filter: blur(25px) saturate(2);
-    -webkit-backdrop-filter: blur(25px) saturate(2);
+    background: rgba(10, 15, 28, 0.8) !important;
+    backdrop-filter: blur(30px) saturate(2.5) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(2.5) !important;
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    z-index: 100;
-    height: calc(4.5rem + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 1000;
+    height: calc(5rem + env(safe-area-inset-bottom, 0px)) !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3) !important;
+    display: flex !important;
+    justify-content: space-around;
+    align-items: center;
   }
 }
