@@ -14,8 +14,8 @@ export async function GET(request: Request) {
         if (!error) {
             const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
             const isLocalhost = process.env.NODE_ENV === 'development'
+            
             if (isLocalhost) {
-                // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
                 return NextResponse.redirect(`${origin}${next}`)
             } else if (forwardedHost) {
                 return NextResponse.redirect(`https://${forwardedHost}${next}`)
@@ -23,8 +23,12 @@ export async function GET(request: Request) {
                 return NextResponse.redirect(`${origin}${next}`)
             }
         }
+        
+        console.error('Auth callback error:', error.message)
     }
 
-    // return the user to an error page with instructions
+    // Se arriviamo qui, c'è stato un errore (manca il codice o lo scambio è fallito)
+    // Reindirizziamo alla pagina di errore specifica che abbiamo creato
     return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
+
