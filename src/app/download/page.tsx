@@ -130,7 +130,9 @@ export default function DownloadPage() {
                             <TabsContent value="ios" className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                                 <div className="flex items-start gap-3">
                                     <div className="h-6 w-6 mt-0.5 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold border border-slate-700">1</div>
-                                    <p className="text-sm text-slate-300">Apri <span className="text-white font-medium italic">Safari</span> e vai su questo link.</p>
+                                    <p className="text-sm text-slate-300">
+                                        Apri <span className="text-white font-medium italic">Safari</span> e vai su <a href={baseUrl} className="text-teal-400 underline">{baseUrl}</a>.
+                                    </p>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <div className="h-6 w-6 mt-0.5 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold border border-slate-700">2</div>
@@ -151,7 +153,9 @@ export default function DownloadPage() {
                             <TabsContent value="android" className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                                 <div className="flex items-start gap-3">
                                     <div className="h-6 w-6 mt-0.5 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold border border-slate-700">1</div>
-                                    <p className="text-sm text-slate-300">Apri <span className="text-white font-medium italic">Chrome</span> e vai su questo link.</p>
+                                    <p className="text-sm text-slate-300">
+                                        Apri <span className="text-white font-medium italic">Chrome</span> e vai su <a href={baseUrl} className="text-teal-400 underline">{baseUrl}</a>.
+                                    </p>
                                 </div>
                                 
                                 {deferredPrompt ? (

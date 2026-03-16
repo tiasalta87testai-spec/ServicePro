@@ -53,11 +53,11 @@ export default async function SettingsPage() {
             </div>
 
             <Tabs defaultValue="company" className="w-full">
-                <TabsList className="grid w-full grid-cols-4 lg:w-[400px]">
-                    <TabsTrigger value="company">Azienda</TabsTrigger>
-                    <TabsTrigger value="messaging">Messaggistica</TabsTrigger>
-                    <TabsTrigger value="calendar">Calendario</TabsTrigger>
-                    <TabsTrigger value="team">Team</TabsTrigger>
+                <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:grid-cols-4 bg-slate-100/50 p-1 mb-2 scrollbar-none lg:w-[400px]">
+                    <TabsTrigger value="company" className="flex-1 min-w-[80px] whitespace-nowrap">Azienda</TabsTrigger>
+                    <TabsTrigger value="messaging" className="flex-1 min-w-[120px] whitespace-nowrap">Messaggistica</TabsTrigger>
+                    <TabsTrigger value="calendar" className="flex-1 min-w-[100px] whitespace-nowrap">Calendario</TabsTrigger>
+                    <TabsTrigger value="team" className="flex-1 min-w-[80px] whitespace-nowrap">Team</TabsTrigger>
                 </TabsList>
 
                 {/* Tab Azienda */}

@@ -79,10 +79,10 @@ export default async function EventDetailPage({ params }: { params: { id: string
             </div>
 
             <Tabs defaultValue="info" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
-                    <TabsTrigger value="info">Info Evento</TabsTrigger>
-                    <TabsTrigger value="packing">Packing List</TabsTrigger>
-                    <TabsTrigger value="logistics">Note & Logistica</TabsTrigger>
+                <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:grid-cols-3 bg-slate-100/50 p-1 mb-2 scrollbar-none lg:w-[400px]">
+                    <TabsTrigger value="info" className="flex-1 min-w-[100px] whitespace-nowrap">Info Evento</TabsTrigger>
+                    <TabsTrigger value="packing" className="flex-1 min-w-[100px] whitespace-nowrap">Packing List</TabsTrigger>
+                    <TabsTrigger value="logistics" className="flex-1 min-w-[120px] whitespace-nowrap">Note & Logistica</TabsTrigger>
                 </TabsList>
 
                 {/* Tab Informazioni Generali */}

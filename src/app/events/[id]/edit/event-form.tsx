@@ -235,10 +235,10 @@ export function EventForm({ equipment, clients, initialData }: EventFormProps) {
     return (
         <div className="space-y-6">
             <Tabs defaultValue="general" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="general">Generale</TabsTrigger>
-                    <TabsTrigger value="client">Cliente & Location</TabsTrigger>
-                    <TabsTrigger value="equipment">Attrezzatura</TabsTrigger>
+                <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:grid-cols-3 bg-slate-100/50 p-1 mb-2 scrollbar-none">
+                    <TabsTrigger value="general" className="flex-1 min-w-[100px] whitespace-nowrap">Generale</TabsTrigger>
+                    <TabsTrigger value="client" className="flex-1 min-w-[150px] whitespace-nowrap">Cliente & Location</TabsTrigger>
+                    <TabsTrigger value="equipment" className="flex-1 min-w-[120px] whitespace-nowrap">Attrezzatura</TabsTrigger>
                 </TabsList>
 
                 <div className="mt-6">
@@ -254,14 +254,14 @@ export function EventForm({ equipment, clients, initialData }: EventFormProps) {
                                     <Label>Nome Evento *</Label>
                                     <Input placeholder="Es. Matrimonio Rossi" value={eventName} onChange={e => setEventName(e.target.value)} />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="grid gap-2">
                                         <Label>Inizio Evento *</Label>
-                                        <Input type="datetime-local" value={startDate} onChange={e => setStartDate(e.target.value)} />
+                                        <Input type="datetime-local" className="bg-white" value={startDate} onChange={e => setStartDate(e.target.value)} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label>Fine Evento</Label>
-                                        <Input type="datetime-local" value={endDate} onChange={e => setEndDate(e.target.value)} />
+                                        <Input type="datetime-local" className="bg-white" value={endDate} onChange={e => setEndDate(e.target.value)} />
                                     </div>
                                 </div>
                                 <div className="grid gap-2">

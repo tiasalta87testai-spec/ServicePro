@@ -78,10 +78,10 @@ export default async function EquipmentDetailPage({ params }: { params: { id: st
             </div>
 
             <Tabs defaultValue="details" className="w-full">
-                <TabsList className="grid w-full grid-cols-4 lg:w-[500px]">
-                    <TabsTrigger value="details">Dettagli</TabsTrigger>
-                    <TabsTrigger value="specs">Specifiche</TabsTrigger>
-                    <TabsTrigger value="events">
+                <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:grid-cols-4 bg-slate-100/50 p-1 mb-2 scrollbar-none lg:w-[500px]">
+                    <TabsTrigger value="details" className="flex-1 min-w-[80px] whitespace-nowrap">Dettagli</TabsTrigger>
+                    <TabsTrigger value="specs" className="flex-1 min-w-[100px] whitespace-nowrap">Specifiche</TabsTrigger>
+                    <TabsTrigger value="events" className="flex-1 min-w-[80px] whitespace-nowrap">
                         Eventi
                         {activeEventsCount > 0 && (
                             <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-teal-500 text-white">
@@ -89,7 +89,7 @@ export default async function EquipmentDetailPage({ params }: { params: { id: st
                             </span>
                         )}
                     </TabsTrigger>
-                    <TabsTrigger value="maintenance">
+                    <TabsTrigger value="maintenance" className="flex-1 min-w-[140px] whitespace-nowrap">
                         Manutenzione
                         {maintenanceList.filter((m: any) => !m.resolved_at).length > 0 && (
                             <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-red-500 text-white">
