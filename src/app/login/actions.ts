@@ -32,7 +32,7 @@ export async function loginWithOtp(formData: FormData) {
     const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-            emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/confirm`,
         },
     })
 
