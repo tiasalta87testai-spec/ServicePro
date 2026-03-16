@@ -40,7 +40,7 @@ export default function RootLayoutClient({
         return () => subscription.unsubscribe()
     }, [supabase.auth])
 
-    const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/auth')
+    const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/auth') || pathname.startsWith('/download')
 
     // Don't render layout structure for auth pages
     if (isAuthPage) {
