@@ -5,10 +5,11 @@ import { toggleEquipmentLoaded, toggleEquipmentReturned } from "@/app/actions/pa
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle2, Box, Truck, RotateCcw, AlertTriangle } from "lucide-react"
+import { CheckCircle2, Box, Truck, RotateCcw, AlertTriangle, RefreshCw } from "lucide-react"
 import { EquipmentQRCode } from "@/components/EquipmentQRCode"
 import { ScannerPlaceholder } from "./scanner"
 import { toast } from "@/hooks/use-toast"
+import { cn } from "@/lib/utils"
 
 interface PackingItem {
     id: string
@@ -65,7 +66,6 @@ export default function PackingListInteractive({
             return next
         })
     }
-
     const handleScan = async (data: any) => {
         if (data.type === "equipment_check" && data.equipmentId) {
             const item = packingList.find(i => i.equipment.id === data.equipmentId)
@@ -104,136 +104,142 @@ export default function PackingListInteractive({
 
     return (
         <div className="space-y-6">
-            <ScannerPlaceholder onScan={handleScan} />
+            <div className="pwa-only:mt-2">
+                <ScannerPlaceholder onScan={handleScan} />
+            </div>
 
-            {/* Progress indicators */}
+            {/* Progress indicators - Glass Effect */}
             <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="glass p-4 border-amber-500/20 shadow-lg shadow-amber-500/5">
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-amber-800 flex items-center gap-1.5">
-                            <Truck className="h-4 w-4" /> Caricati
+                        <span className="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+                            <Truck className="h-3.5 w-3.5" /> Caricati
                         </span>
-                        <span className="text-lg font-bold text-amber-800">{loadedCount}/{totalItems}</span>
+                        <span className="text-xl font-black text-white">{loadedCount}<span className="text-xs font-normal text-slate-500 ml-1">/ {totalItems}</span></span>
                     </div>
-                    <div className="w-full h-1.5 bg-amber-200 rounded-full overflow-hidden mt-2">
+                    <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden mt-3">
                         <div
-                            className="h-full bg-amber-500 rounded-full transition-all"
+                            className="h-full bg-gradient-to-r from-amber-600 to-amber-400 rounded-full transition-all duration-700 ease-out"
                             style={{ width: totalItems > 0 ? `${(loadedCount / totalItems) * 100}%` : '0%' }}
                         />
                     </div>
                 </div>
-                <div className="p-3 bg-teal-50 border border-teal-200 rounded-lg">
+                <div className="glass p-4 border-teal-500/20 shadow-lg shadow-teal-500/5">
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-teal-800 flex items-center gap-1.5">
-                            <RotateCcw className="h-4 w-4" /> Rientrati
+                        <span className="text-xs font-bold text-teal-400 uppercase tracking-widest flex items-center gap-1.5">
+                            <RotateCcw className="h-3.5 w-3.5" /> Rientrati
                         </span>
-                        <span className="text-lg font-bold text-teal-800">{returnedCount}/{totalItems}</span>
+                        <span className="text-xl font-black text-white">{returnedCount}<span className="text-xs font-normal text-slate-500 ml-1">/ {totalItems}</span></span>
                     </div>
-                    <div className="w-full h-1.5 bg-teal-200 rounded-full overflow-hidden mt-2">
+                    <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden mt-3">
                         <div
-                            className="h-full bg-teal-500 rounded-full transition-all"
+                            className="h-full bg-gradient-to-r from-teal-600 to-teal-400 rounded-full transition-all duration-700 ease-out"
                             style={{ width: totalItems > 0 ? `${(returnedCount / totalItems) * 100}%` : '0%' }}
                         />
                     </div>
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="border border-slate-200 rounded-lg overflow-hidden">
-                <table className="w-full text-sm text-left">
-                    <thead className="bg-slate-50 border-b border-slate-200">
+            {/* Desktop Table View - Hidden on Mobile */}
+            <div className="hidden md:block glass overflow-hidden border-white/5">
+                <table className="w-full text-sm text-left border-collapse">
+                    <thead className="bg-white/5 border-b border-white/10">
                         <tr>
-                            <th className="px-4 py-3 font-medium text-slate-600">Articolo</th>
-                            <th className="px-4 py-3 font-medium text-slate-600 text-center">Q.tà</th>
-                            <th className="px-4 py-3 font-medium text-slate-600 text-center">Carico</th>
-                            <th className="px-4 py-3 font-medium text-slate-600 text-center">Rientro</th>
-                            <th className="px-4 py-3 font-medium text-slate-600 text-center w-20">QR</th>
+                            <th className="px-6 py-4 font-bold text-slate-400 uppercase tracking-wider text-[10px]">Articolo</th>
+                            <th className="px-6 py-4 font-bold text-slate-400 uppercase tracking-wider text-[10px] text-center">Q.tà</th>
+                            <th className="px-6 py-4 font-bold text-slate-400 uppercase tracking-wider text-[10px] text-center">Carico</th>
+                            <th className="px-6 py-4 font-bold text-slate-400 uppercase tracking-wider text-[10px] text-center">Rientro</th>
+                            <th className="px-6 py-4 font-bold text-slate-400 uppercase tracking-wider text-[10px] text-center w-20">QR</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 bg-white">
+                    <tbody className="divide-y divide-white/5">
                         {packingList.length === 0 ? (
                             <tr>
-                                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
+                                <td colSpan={5} className="px-6 py-12 text-center text-slate-500 italic">
                                     Nessun articolo assegnato a questo evento.
                                 </td>
                             </tr>
                         ) : (
                             packingList.map((item) => (
-                                <tr key={item.id} className={`transition-colors ${item.is_returned ? 'bg-emerald-50/50' : item.is_loaded ? 'bg-amber-50/50' : 'hover:bg-slate-50'}`}>
-                                    <td className="px-4 py-3">
-                                        <div className="font-medium text-slate-900">{item.equipment.name}</div>
-                                        <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
-                                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">{item.equipment.category}</Badge>
-                                            {item.equipment.brand_model && <span>{item.equipment.brand_model}</span>}
-                                            {item.equipment.serial_number && <span className="font-mono">SN: {item.equipment.serial_number}</span>}
+                                <tr key={item.id} className={cn(
+                                    "transition-colors group",
+                                    item.is_returned ? "bg-teal-500/5 hover:bg-teal-500/10" : 
+                                    item.is_loaded ? "bg-amber-500/5 hover:bg-amber-500/10" : 
+                                    "hover:bg-white/5"
+                                )}>
+                                    <td className="px-6 py-4">
+                                        <div className="font-bold text-white group-hover:text-teal-400 transition-colors">{item.equipment.name}</div>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 bg-white/5 text-slate-400 border-white/10 uppercase tracking-tighter">
+                                                {item.equipment.category}
+                                            </Badge>
+                                            {item.equipment.serial_number && <span className="text-[10px] font-mono text-slate-500">SN: {item.equipment.serial_number}</span>}
                                         </div>
-                                        {item.condition_on_return && item.condition_on_return !== 'ottimo' && (
-                                            <div className="mt-1 flex items-center gap-1">
-                                                <AlertTriangle className="h-3 w-3 text-amber-500" />
-                                                <span className="text-xs text-amber-700 capitalize">{item.condition_on_return.replace('_', ' ')}</span>
-                                            </div>
-                                        )}
                                     </td>
-                                    <td className="px-4 py-3 text-center font-semibold text-slate-900">
-                                        {item.quantity}
+                                    <td className="px-6 py-4 text-center">
+                                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 font-bold text-white border border-white/10">
+                                            {item.quantity}
+                                        </span>
                                     </td>
-                                    <td className="px-4 py-3 text-center">
+                                    <td className="px-6 py-4 text-center">
                                         <Button
-                                            size="sm"
+                                            size="icon"
                                             variant={item.is_loaded ? "default" : "outline"}
-                                            className={item.is_loaded
-                                                ? "bg-emerald-500 hover:bg-emerald-600 text-white h-8 w-8 p-0"
-                                                : "h-8 w-8 p-0 text-slate-400 hover:text-emerald-600 hover:border-emerald-300"
-                                            }
+                                            className={cn(
+                                                "h-10 w-10 rounded-xl transition-all duration-300",
+                                                item.is_loaded 
+                                                    ? "bg-amber-500 hover:bg-amber-600 shadow-lg shadow-amber-500/20" 
+                                                    : "border-white/10 text-slate-500 hover:text-amber-500 hover:border-amber-500/50"
+                                            )}
                                             onClick={() => handleToggleLoaded(item)}
                                             disabled={loadingIds.has(item.id) || item.is_returned}
-                                            title={item.is_loaded ? "Annulla caricamento" : "Segna come caricato"}
                                         >
                                             {loadingIds.has(item.id) ? (
-                                                <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                                                <RefreshCw className="h-4 w-4 animate-spin" />
                                             ) : (
-                                                <CheckCircle2 className="h-4 w-4" />
+                                                <Truck className={cn("h-5 w-5", item.is_loaded ? "text-white" : "text-current")} />
                                             )}
                                         </Button>
                                     </td>
-                                    <td className="px-4 py-3 text-center">
-                                        <div className="flex items-center justify-center gap-1">
+                                    <td className="px-6 py-4 text-center">
+                                        <div className="flex items-center justify-center gap-2">
                                             {item.is_loaded && !item.is_returned && (
                                                 <Select
                                                     value={returnConditions[item.id] || 'ottimo'}
                                                     onValueChange={(val) => setReturnConditions(prev => ({ ...prev, [item.id]: val }))}
                                                 >
-                                                    <SelectTrigger className="h-7 w-[90px] text-xs">
+                                                    <SelectTrigger className="h-10 w-[110px] text-xs bg-white/5 border-white/10 text-white rounded-xl">
                                                         <SelectValue />
                                                     </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="ottimo">✅ Ottimo</SelectItem>
-                                                        <SelectItem value="buono">🟡 Buono</SelectItem>
-                                                        <SelectItem value="danneggiato">🔴 Danneggiato</SelectItem>
-                                                        <SelectItem value="mancante">⚫ Mancante</SelectItem>
+                                                    <SelectContent className="bg-slate-900 border-white/10 text-white glass">
+                                                        <SelectItem value="ottimo">Ottimo</SelectItem>
+                                                        <SelectItem value="buono">Buono</SelectItem>
+                                                        <SelectItem value="danneggiato">Danneggiato</SelectItem>
+                                                        <SelectItem value="mancante">Mancante</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             )}
                                             <Button
-                                                size="sm"
+                                                size="icon"
                                                 variant={item.is_returned ? "default" : "outline"}
-                                                className={item.is_returned
-                                                    ? "bg-teal-500 hover:bg-teal-600 text-white h-8 w-8 p-0"
-                                                    : "h-8 w-8 p-0 text-slate-400 hover:text-teal-600 hover:border-teal-300"
-                                                }
+                                                className={cn(
+                                                    "h-10 w-10 rounded-xl transition-all duration-300",
+                                                    item.is_returned 
+                                                        ? "bg-teal-500 hover:bg-teal-600 shadow-lg shadow-teal-500/20" 
+                                                        : "border-white/10 text-slate-500 hover:text-teal-500 hover:border-teal-500/50"
+                                                )}
                                                 onClick={() => handleToggleReturned(item)}
                                                 disabled={loadingIds.has(item.id) || !item.is_loaded}
-                                                title={item.is_returned ? "Annulla rientro" : "Segna come rientrato"}
                                             >
                                                 {loadingIds.has(item.id) ? (
-                                                    <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                                                    <RefreshCw className="h-4 w-4 animate-spin" />
                                                 ) : (
-                                                    <RotateCcw className="h-4 w-4" />
+                                                    <RotateCcw className={cn("h-5 w-5", item.is_returned ? "text-white" : "text-current")} />
                                                 )}
                                             </Button>
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3 text-center">
+                                    <td className="px-6 py-4 text-center">
                                         <EquipmentQRCode
                                             equipmentId={item.equipment.id}
                                             equipmentName={item.equipment.name}
@@ -247,6 +253,106 @@ export default function PackingListInteractive({
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Card View - Hidden on Desktop */}
+            <div className="md:hidden space-y-4">
+                {packingList.length === 0 ? (
+                    <div className="glass p-12 text-center text-slate-500 italic">
+                        Nessun articolo assegnato.
+                    </div>
+                ) : (
+                    packingList.map((item) => (
+                        <div key={item.id} className={cn(
+                            "glass p-4 relative overflow-hidden transition-all border-l-4",
+                            item.is_returned ? "border-l-teal-500 bg-teal-500/5" : 
+                            item.is_loaded ? "border-l-amber-500 bg-amber-500/5" : 
+                            "border-l-transparent bg-white/5"
+                        )}>
+                            <div className="flex justify-between items-start gap-2">
+                                <div className="flex-1">
+                                    <h4 className="font-bold text-white text-base leading-tight">
+                                        {item.equipment.name}
+                                    </h4>
+                                    <div className="flex items-center gap-2 mt-1.5">
+                                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 bg-white/5 text-slate-400 border-white/10 uppercase font-bold tracking-tighter">
+                                            {item.equipment.category}
+                                        </Badge>
+                                        <span className="text-[11px] text-slate-500 font-bold">Q.tà: {item.quantity}</span>
+                                    </div>
+                                    {item.equipment.serial_number && (
+                                        <p className="text-[10px] font-mono text-slate-500 mt-1">S/N: {item.equipment.serial_number}</p>
+                                    )}
+                                </div>
+                                <div className="shrink-0">
+                                    <EquipmentQRCode
+                                        equipmentId={item.equipment.id}
+                                        equipmentName={item.equipment.name}
+                                        serialNumber={item.equipment.serial_number}
+                                        eventId={eventId}
+                                        eventName={eventName}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="mt-4 flex items-center gap-3">
+                                <Button
+                                    className={cn(
+                                        "flex-1 h-12 gap-2 font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg",
+                                        item.is_loaded 
+                                            ? "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/20" 
+                                            : "bg-white/5 border border-white/10 text-slate-400 hover:text-amber-500 hover:border-amber-500/50"
+                                    )}
+                                    onClick={() => handleToggleLoaded(item)}
+                                    disabled={loadingIds.has(item.id) || item.is_returned}
+                                >
+                                    {loadingIds.has(item.id) ? (
+                                        <RefreshCw className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <Truck className="h-4 w-4" />
+                                    )}
+                                    {item.is_loaded ? "Caricato" : "Carica"}
+                                </Button>
+
+                                <div className="flex-[1.5] flex gap-2">
+                                    {item.is_loaded && !item.is_returned && (
+                                        <Select
+                                            value={returnConditions[item.id] || 'ottimo'}
+                                            onValueChange={(val) => setReturnConditions(prev => ({ ...prev, [item.id]: val }))}
+                                        >
+                                            <SelectTrigger className="h-12 flex-1 bg-white/10 border-white/10 text-white font-bold text-xs rounded-xl">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-slate-900 border-white/10 text-white glass">
+                                                <SelectItem value="ottimo">Ottimo</SelectItem>
+                                                <SelectItem value="buono">Buono</SelectItem>
+                                                <SelectItem value="danneggiato">Danni</SelectItem>
+                                                <SelectItem value="mancante">Mancante</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
+                                    <Button
+                                        className={cn(
+                                            "h-12 gap-2 font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg min-w-[100px] flex-1",
+                                            item.is_returned 
+                                                ? "bg-teal-500 hover:bg-teal-600 text-white shadow-teal-500/20" 
+                                                : "bg-white/5 border border-white/10 text-slate-400 hover:text-teal-500 hover:border-teal-500/50"
+                                        )}
+                                        onClick={() => handleToggleReturned(item)}
+                                        disabled={loadingIds.has(item.id) || !item.is_loaded}
+                                    >
+                                        {loadingIds.has(item.id) ? (
+                                            <RefreshCw className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <RotateCcw className="h-4 w-4" />
+                                        )}
+                                        {item.is_returned ? "Rientrato" : "Rientro"}
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     )
