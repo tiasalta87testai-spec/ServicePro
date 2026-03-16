@@ -172,14 +172,79 @@
     left: 0;
     right: 0;
     background: rgba(10, 15, 28, 0.8) !important;
-    backdrop-filter: blur(30px) saturate(2.5) !important;
-    -webkit-backdrop-filter: blur(30px) saturate(2.5) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(40px) saturate(2.5) !important;
+    -webkit-backdrop-filter: blur(40px) saturate(2.5) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
     z-index: 1000;
-    height: calc(5rem + env(safe-area-inset-bottom, 0px)) !important;
+    height: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
     display: flex !important;
     justify-content: space-around;
     align-items: center;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.5) !important;
+  }
+
+  /* Specific Component Overrides for Clients Page table */
+  .overflow-hidden.bg-white.shadow-sm {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  table.w-full {
+    border-collapse: separate !important;
+    border-spacing: 0 12px !important;
+  }
+  
+  table tr {
+    background: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 16px !important;
+    display: table-row !important;
+    margin-bottom: 10px !important;
+  }
+  
+  table tr td {
+    padding: 20px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+  
+  table tr td:first-child {
+    border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px 0 0 16px !important;
+  }
+  
+  table tr td:last-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 0 16px 16px 0 !important;
+  }
+
+  thead.bg-slate-50 {
+    display: none !important;
+  }
+
+  /* Dashboard Adjustments */
+  .grid.lg-cols-5, .grid.md-grid-cols-2 {
+    gap: 1rem !important;
+  }
+
+  .border-t-4.border-t-teal-500 {
+    border-top: none !important;
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(255, 255, 255, 0.03)) !important;
+  }
+
+  /* Force headers to look like "Welcome" style */
+  h1.text-3xl.font-bold, h1.text-2xl.font-bold {
+    font-size: 1.75rem !important;
+    background: linear-gradient(to right, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Scrollbar for PWA */
+  ::-webkit-scrollbar {
+    display: none;
   }
 }
