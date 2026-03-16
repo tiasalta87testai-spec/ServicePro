@@ -19,15 +19,25 @@ export default async function EquipmentPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900">Magazzino</h1>
-                <Button asChild className="bg-teal-500 hover:bg-teal-600 text-white">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-slate-900 dark:text-white pwa-only:text-white pwa-only:mt-8 pwa-only:mb-4">
+                    Magazzino
+                </h1>
+                <Button asChild className="hidden md:flex bg-teal-500 hover:bg-teal-600 text-white">
                     <Link href="/equipment/new">
                         <Plus className="mr-2 h-4 w-4" /> Nuovo Articolo
                     </Link>
                 </Button>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+            {/* Mobile FAB */}
+            <Button asChild className="md:hidden fixed bottom-24 right-6 h-14 px-6 rounded-full bg-teal-500 hover:bg-teal-600 shadow-lg shadow-teal-500/30 text-white z-50 flex items-center gap-2 border border-white/20">
+                <Link href="/equipment/new">
+                    <Plus className="h-6 w-6" />
+                    <span className="font-bold tracking-tight uppercase">Nuovo</span>
+                </Link>
+            </Button>
+
+            <div className="bg-white md:bg-white rounded-lg shadow-sm border border-slate-200 md:border-slate-200 pwa-only:bg-transparent pwa-only:border-0 pwa-only:shadow-none">
                 <DataTable columns={columns} data={response.data || []} />
             </div>
         </div>

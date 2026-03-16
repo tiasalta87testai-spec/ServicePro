@@ -247,4 +247,12 @@
   ::-webkit-scrollbar {
     display: none;
   }
+
+  /* Custom Utilities for PWA Mode */
+  .pwa-only\:text-white { color: #FFFFFF !important; }
+  .pwa-only\:bg-transparent { background-color: transparent !important; }
+  .pwa-only\:border-0 { border-width: 0 !important; }
+  .pwa-only\:shadow-none { box-shadow: none !important; }
+  .pwa-only\:mt-8 { margin-top: 2rem !important; }
+  .pwa-only\:mb-4 { margin-bottom: 1rem !important; }
 }
