@@ -32,8 +32,8 @@ export async function loginWithOtp(formData: FormData) {
     const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-            // Lasciamo il redirect come backup, ma l'utente userà il codice
-            emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+            // Reindirizziamo l'utente alla pagina di download dopo il login da Magic Link
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/download`,
             shouldCreateUser: true,
         },
     })
@@ -63,7 +63,7 @@ export async function verifyOtp(formData: FormData) {
     }
 
     revalidatePath("/", "layout")
-    redirect("/")
+    redirect("/download")
 }
 
 export async function signup(formData: FormData) {
