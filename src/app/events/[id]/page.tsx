@@ -8,7 +8,6 @@ import { ArrowLeft, Edit, Calendar, MapPin, User, Send, Box } from "lucide-react
 import Link from "next/link"
 import { format } from "date-fns"
 import { it } from "date-fns/locale"
-import { ScannerPlaceholder } from "./scanner"
 import { GenerateQuoteButtonWrapper } from "@/components/GenerateQuoteButtonWrapper"
 import PackingListInteractive from "./packing-list-interactive"
 import { DeleteEventButton } from "./delete-button"
@@ -159,7 +158,6 @@ export default async function EventDetailPage({ params }: { params: { id: string
                             </div>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <ScannerPlaceholder />
                             <PackingListInteractive
                                 packingList={packingList}
                                 eventId={event.id}

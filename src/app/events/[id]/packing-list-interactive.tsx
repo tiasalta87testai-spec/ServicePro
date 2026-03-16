@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CheckCircle2, Box, Truck, RotateCcw, AlertTriangle } from "lucide-react"
 import { EquipmentQRCode } from "@/components/EquipmentQRCode"
+import { ScannerPlaceholder } from "./scanner"
+import { toast } from "@/hooks/use-toast"
 
 interface PackingItem {
     id: string
@@ -64,12 +66,46 @@ export default function PackingListInteractive({
         })
     }
 
+    const handleScan = async (data: any) => {
+        if (data.type === "equipment_check" && data.equipmentId) {
+            const item = packingList.find(i => i.equipment.id === data.equipmentId)
+            if (item) {
+                if (!item.is_loaded) {
+                    await handleToggleLoaded(item)
+                    toast({
+                        title: "Articolo Caricato",
+                        description: `${item.equipment.name} segnato come caricato.`,
+                    })
+                } else if (!item.is_returned) {
+                    await handleToggleReturned(item)
+                    toast({
+                        title: "Articolo Rientrato",
+                        description: `${item.equipment.name} segnato come rientrato.`,
+                    })
+                } else {
+                    toast({
+                        title: "Articolo già completato",
+                        description: `${item.equipment.name} è già stato caricato e rientrato.`,
+                    })
+                }
+            } else {
+                toast({
+                    title: "Articolo non trovato",
+                    description: "Questo articolo non fa parte della packing list di questo evento.",
+                    variant: "destructive",
+                })
+            }
+        }
+    }
+
     const totalItems = packingList.length
     const loadedCount = packingList.filter(i => i.is_loaded).length
     const returnedCount = packingList.filter(i => i.is_returned).length
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
+            <ScannerPlaceholder onScan={handleScan} />
+
             {/* Progress indicators */}
             <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
