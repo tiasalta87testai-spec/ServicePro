@@ -32,19 +32,38 @@ export async function loginWithOtp(formData: FormData) {
     const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-            emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/confirm`,
+            // Lasciamo il redirect come backup, ma l'utente userà il codice
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+            shouldCreateUser: true,
         },
     })
 
     if (error) {
-        console.error("Magic Link Error:", error.message, error.status)
-        if (error.status === 429) {
-            redirect("/login?error=Troppe richieste. Riprova tra qualche minuto.")
-        }
-        redirect("/login?error=Non è stato possibile inviare il link magico")
+        console.error("OTP Send Error:", error.message)
+        return { error: "Non è stato possibile inviare il codice" }
     }
 
-    redirect("/login?success=Link magico inviato! Controlla la tua email")
+    return { success: true, email }
+}
+
+export async function verifyOtp(formData: FormData) {
+    const supabase = await createClient()
+    const email = formData.get("email") as string
+    const token = formData.get("token") as string
+
+    const { error } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'email',
+    })
+
+    if (error) {
+        console.error("OTP Verify Error:", error.message)
+        redirect("/login?error=Codice non valido o scaduto")
+    }
+
+    revalidatePath("/", "layout")
+    redirect("/")
 }
 
 export async function signup(formData: FormData) {
