@@ -124,8 +124,8 @@ export default async function Home() {
           </CardContent>
         </Card>
 
-        {/* Timeline Eventi Column */}
-        <Card className="shadow-sm border-slate-200 md:col-span-2 overflow-hidden glass">
+        {/* Timeline Eventi Column - Hidden on mobile app */}
+        <Card className="hidden md:block shadow-sm border-slate-200 md:col-span-2 overflow-hidden glass">
           <CardHeader>
             <CardTitle className="text-lg">Timeline Eventi</CardTitle>
           </CardHeader>
