@@ -221,13 +221,19 @@ export function DataTable<TData, TValue>({
                                     </div>
                                 </div>
                                 <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
-                                    <div className="flex items-center gap-1.5">
-                                        <div className="h-2 w-2 rounded-full bg-teal-500 animate-pulse"></div>
-                                        <span className="text-xs text-slate-300">
-                                            Quantità: <span className="font-bold text-white">{item.total_quantity}</span>
-                                    </span>
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="h-2 w-2 rounded-full bg-teal-500 animate-pulse"></div>
+                                            <span className="text-xs text-slate-300">
+                                                Quantità: <span className="font-bold text-white">{item.total_quantity}</span>
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="text-[10px] text-slate-400 font-medium uppercase">Noleggio:</span>
+                                            <span className="text-xs font-bold text-teal-400">€ {parseFloat(item.daily_rental_price || 0).toFixed(2)} /gg</span>
+                                        </div>
                                     </div>
-                                    <div className="text-[10px] text-slate-500 font-mono">
+                                    <div className="text-[10px] text-slate-500 font-mono self-end">
                                         ID: {item.id.slice(0, 6)}
                                     </div>
                                 </div>

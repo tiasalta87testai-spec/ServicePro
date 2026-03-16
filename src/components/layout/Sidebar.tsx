@@ -10,7 +10,8 @@ import {
     Settings,
     QrCode,
     Users,
-    LogOut
+    LogOut,
+    MoreHorizontal
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -105,17 +106,23 @@ export function Sidebar() {
 export function MobileNav() {
     const pathname = usePathname()
 
+    const mainNav = [
+        { name: "Dashboard", href: "/", icon: LayoutDashboard },
+        { name: "Eventi", href: "/events", icon: CalendarDays },
+        { name: "Magazzino", href: "/equipment", icon: Package },
+    ]
+
     return (
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 app-bottom-nav">
-            <div className="flex justify-around items-center h-full">
-                {navigation.map((item) => {
+            <div className="flex justify-around items-center h-full w-full">
+                {mainNav.map((item) => {
                     const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
                     return (
                         <Link
                             key={item.name}
                             href={item.href}
                             className={cn(
-                                "flex flex-col items-center justify-center w-full h-full space-y-1",
+                                "flex flex-col items-center justify-center w-full h-full space-y-1 py-2",
                                 isActive ? "text-teal-400 font-bold" : "text-slate-500/80"
                             )}
                         >
@@ -124,13 +131,45 @@ export function MobileNav() {
                         </Link>
                     )
                 })}
-                <button
-                    onClick={() => signout()}
-                    className="flex flex-col items-center justify-center w-full h-full space-y-1 text-red-400"
-                >
-                    <LogOut className="h-6 w-6" aria-hidden="true" />
-                    <span className="text-[10px] font-medium tracking-wide">Esci</span>
-                </button>
+                
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="flex flex-col items-center justify-center w-full h-full space-y-1 text-slate-500/80 focus:outline-none">
+                            <MoreHorizontal className="h-6 w-6" aria-hidden="true" />
+                            <span className="text-[10px] font-medium tracking-wide">More</span>
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" side="top" className="w-56 mb-4 glass border-white/10 text-white p-2">
+                        <DropdownMenuLabel className="text-slate-400 font-normal px-2 py-1.5 text-xs">Altro</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-white/5" />
+                        <DropdownMenuItem asChild className="focus:bg-white/10 cursor-pointer rounded-lg">
+                            <Link href="/clients" className="flex items-center w-full px-2 py-2 text-sm">
+                                <Users className="mr-3 h-4 w-4 text-teal-400" />
+                                <span>Clienti</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="focus:bg-white/10 cursor-pointer rounded-lg">
+                            <Link href="/calendar" className="flex items-center w-full px-2 py-2 text-sm">
+                                <Calendar className="mr-3 h-4 w-4 text-teal-400" />
+                                <span>Calendario</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="focus:bg-white/10 cursor-pointer rounded-lg">
+                            <Link href="/scanner" className="flex items-center w-full px-2 py-2 text-sm">
+                                <QrCode className="mr-3 h-4 w-4 text-teal-400" />
+                                <span>Scanner QR</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-white/5" />
+                        <DropdownMenuItem 
+                            onClick={() => signout()} 
+                            className="text-red-400 focus:text-red-400 focus:bg-red-400/10 cursor-pointer rounded-lg flex items-center px-2 py-2 text-sm"
+                        >
+                            <LogOut className="mr-3 h-4 w-4" />
+                            <span>Esci</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </div>
     )
