@@ -18,8 +18,9 @@ export default function LoginPage({ searchParams }: { searchParams: { error?: st
         <div className="flex h-screen w-full items-center justify-center px-4 bg-slate-50">
             <Card className="mx-auto max-w-sm w-full shadow-lg border-slate-200">
                 <CardHeader>
-                    <CardTitle className="text-2xl text-center font-bold tracking-tight">
-                        Service<span className="text-teal-500">Pro</span>
+                    <CardTitle className="text-2xl text-center font-bold tracking-tight flex items-center justify-center gap-2">
+                        <img src="/icon.png" alt="Logo" className="w-8 h-8 rounded-lg shadow-sm" />
+                        <span>Service<span className="text-teal-500">Pro</span></span>
                     </CardTitle>
                     <CardDescription className="text-center">
                         {showOtpInput 

@@ -41,7 +41,8 @@ export function Sidebar() {
 
     return (
         <div className="hidden md:flex flex-col w-[260px] bg-slate-800 h-screen fixed top-0 left-0 border-r border-slate-700">
-            <div className="flex items-center h-16 px-6 border-b border-slate-700">
+            <div className="flex items-center h-16 px-6 border-b border-slate-700 gap-3">
+                <img src="/icon.png" alt="Logo" className="w-8 h-8 rounded-lg" />
                 <span className="text-xl font-bold font-sans text-white tracking-tight">
                     Service<span className="text-teal-400">Pro</span>
                 </span>
