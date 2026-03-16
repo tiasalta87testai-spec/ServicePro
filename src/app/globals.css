@@ -61,3 +61,71 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ============================================
+   PWA Premium Mode Integration (Standalone only)
+   ============================================ */
+
+@media (display-mode: standalone) {
+  :root {
+    --background: 222.2 84% 4.9%; /* Deep Dark Background for PWA */
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 8%;
+    --card-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+  }
+
+  body {
+    background: #0F172A;
+    color: #F8FAFC;
+    font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, sans-serif;
+    overscroll-behavior: none;
+  }
+
+  /* Glassmorphism Classes only for App mode */
+  .glass {
+    background: rgba(30, 41, 59, 0.72) !important;
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid rgba(148, 163, 184, 0.12) !important;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.06) !important;
+    border-radius: 16px;
+  }
+
+  /* Hide Sidebar on Mobile App, we will use BottomNav */
+  aside, .hidden.md\:flex.flex-col.w-\[260px\] {
+    display: none !important;
+  }
+
+  /* Reset layout margins in app mode */
+  .md\:ml-\[260px\] {
+    margin-left: 0 !important;
+  }
+  
+  /* Safe Areas for iOS/Android notches */
+  .safe-top { padding-top: env(safe-area-inset-top, 20px); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 20px); }
+
+  /* App Specific Navigation Style */
+  .app-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+    z-index: 50;
+    height: calc(4rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}

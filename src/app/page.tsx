@@ -27,7 +27,7 @@ export default async function Home() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 xl:grid-rows-1 xl:grid-cols-5">
           {/* KPI 1 */}
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-sm border-slate-200 glass">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-slate-500">Eventi attivi (Oggi)</CardTitle>
               <CalendarDays className="h-4 w-4 text-teal-500" />
@@ -39,7 +39,7 @@ export default async function Home() {
           </Card>
 
           {/* KPI 2 */}
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-sm border-slate-200 glass">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-slate-500">Materiale Fuori</CardTitle>
               <PackageOpen className="h-4 w-4 text-emerald-500" />
@@ -51,7 +51,7 @@ export default async function Home() {
           </Card>
 
           {/* KPI 3 (New) */}
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-sm border-slate-200 glass">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-slate-500">Utilizzo Magazzino</CardTitle>
               <Percent className="h-4 w-4 text-teal-400" />
@@ -63,7 +63,7 @@ export default async function Home() {
           </Card>
 
           {/* KPI 4 (New) */}
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-sm border-slate-200 glass">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-slate-500">Manutenzioni Diff.</CardTitle>
               <AlertTriangle className={`h-4 w-4 ${stats.maintenanceAlerts > 0 ? 'text-amber-500' : 'text-slate-400'}`} />
@@ -75,7 +75,7 @@ export default async function Home() {
           </Card>
 
           {/* KPI 5 */}
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-sm border-slate-200 glass">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-slate-500">Fatturato Previs.</CardTitle>
               <TrendingUp className="h-4 w-4 text-emerald-500" />
@@ -90,9 +90,9 @@ export default async function Home() {
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Prossimi Eventi Column */}
-        <Card className="shadow-sm border-slate-200 md:col-span-1 border-t-4 border-t-teal-500">
+        <Card className="shadow-sm border-slate-200 md:col-span-1 border-t-4 border-t-teal-500 glass">
           <CardHeader>
-            <CardTitle className="text-lg text-slate-800">Prossimi Eventi</CardTitle>
+            <CardTitle className="text-lg">Prossimi Eventi</CardTitle>
           </CardHeader>
           <CardContent>
             {upcomingEvents.length === 0 ? (
@@ -125,9 +125,9 @@ export default async function Home() {
         </Card>
 
         {/* Timeline Eventi Column */}
-        <Card className="shadow-sm border-slate-200 md:col-span-2 overflow-hidden">
+        <Card className="shadow-sm border-slate-200 md:col-span-2 overflow-hidden glass">
           <CardHeader>
-            <CardTitle className="text-lg text-slate-800">Timeline Eventi</CardTitle>
+            <CardTitle className="text-lg">Timeline Eventi</CardTitle>
           </CardHeader>
           <CardContent>
             <DashboardCalendar initialEvents={dbEvents} />
