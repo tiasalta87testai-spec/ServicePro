@@ -32,7 +32,7 @@ const navigation = [
     { name: "Calendario", href: "/calendar", icon: Calendar },
     { name: "Magazzino", href: "/equipment", icon: Package },
     { name: "Scanner", href: "/scanner", icon: QrCode, mobileOnly: true },
-    { name: "Impostazioni", href: "/settings", icon: Settings },
+    { name: "Account", href: "/settings", icon: Settings },
 ]
 
 export function Sidebar() {
@@ -124,6 +124,13 @@ export function MobileNav() {
                         </Link>
                     )
                 })}
+                <button
+                    onClick={() => signout()}
+                    className="flex flex-col items-center justify-center w-full h-full space-y-1 text-red-400"
+                >
+                    <LogOut className="h-6 w-6" aria-hidden="true" />
+                    <span className="text-[10px] font-medium tracking-wide">Esci</span>
+                </button>
             </div>
         </div>
     )
