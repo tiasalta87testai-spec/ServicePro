@@ -128,6 +128,29 @@ export default async function EquipmentDetailPage({ params }: { params: { id: st
                                         <dd className="mt-1 text-base text-slate-900 font-mono">{equipment.serial_number}</dd>
                                     </div>
                                 )}
+                                {equipment.qr_code && (
+                                    <div>
+                                        <dt className="text-sm font-medium text-slate-500">Codice QR (ID)</dt>
+                                        <dd className="mt-1 text-base text-slate-900 font-mono text-teal-600">{equipment.qr_code}</dd>
+                                    </div>
+                                )}
+                                {equipment.ubicazione && (
+                                    <div>
+                                        <dt className="text-sm font-medium text-slate-500">Ubicazione</dt>
+                                        <dd className="mt-1 text-base text-slate-900 flex items-center gap-2">
+                                            <Truck className="h-4 w-4 text-slate-400" />
+                                            {equipment.ubicazione}
+                                        </dd>
+                                    </div>
+                                )}
+                                {equipment.description && (
+                                    <div>
+                                        <dt className="text-sm font-medium text-slate-500">Descrizione</dt>
+                                        <dd className="mt-1 text-sm text-slate-600 italic">
+                                            {equipment.description}
+                                        </dd>
+                                    </div>
+                                )}
                                 {equipment.document_url && (
                                     <div className="pt-2">
                                         <Button variant="outline" size="sm" asChild className="text-teal-700 border-teal-200 bg-teal-50 hover:bg-teal-100">
@@ -153,6 +176,19 @@ export default async function EquipmentDetailPage({ params }: { params: { id: st
                                         </p>
                                     </div>
                                 </div>
+
+                                {maintenanceList?.some((m: any) => m.resolved_at) && (
+                                    <div className="flex items-center justify-between p-4 bg-teal-50 rounded-lg border border-teal-100">
+                                        <div>
+                                            <p className="text-sm font-medium text-teal-600">Ultima Manutenzione</p>
+                                            <p className="text-base font-semibold text-teal-800">
+                                                {format(new Date(Math.max(...maintenanceList.filter((m: any) => m.resolved_at).map((m: any) => new Date(m.resolved_at).getTime()))), "dd/MM/yyyy")}
+                                            </p>
+                                        </div>
+                                        <Wrench className="h-6 w-6 text-teal-400" />
+                                    </div>
+                                )}
+
                                 {/* Progress bar */}
                                 <div>
                                     <div className="flex justify-between text-xs text-slate-500 mb-1">

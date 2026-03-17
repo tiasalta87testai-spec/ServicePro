@@ -4,13 +4,15 @@ import { useState, useEffect } from "react"
 import { Html5Qrcode } from "html5-qrcode"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { QrCode, X, Camera, RefreshCw } from "lucide-react"
+import { QrCode, X, Camera, RefreshCw, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { toast } from "@/hooks/use-toast"
+import { getEquipmentByQRCode } from "@/app/actions/equipment"
 
 export default function ScannerPage() {
     const [scanning, setScanning] = useState(false)
     const [result, setResult] = useState<string | null>(null)
+    const [isSearching, setIsSearching] = useState(false)
     const router = useRouter()
 
     useEffect(() => {
@@ -49,22 +51,58 @@ export default function ScannerPage() {
         };
     }, [scanning]);
 
-    const handleScanSuccess = (decodedText: string) => {
+    const handleScanSuccess = async (decodedText: string) => {
+        setIsSearching(true)
         try {
-            const data = JSON.parse(decodedText);
-            if (data.type === "equipment_check" && data.equipmentId) {
+            // Prima proviamo a vedere se è un JSON del nostro sistema
+            let equipmentId = null;
+            try {
+                const data = JSON.parse(decodedText);
+                if (data.type === "equipment_check" && data.equipmentId) {
+                    equipmentId = data.equipmentId;
+                } else if (data.type === "event" && data.eventId) {
+                    router.push(`/events/${data.eventId}`);
+                    return;
+                }
+            } catch (e) {
+                // Non è un JSON, procediamo con la ricerca per qr_code testuale
+            }
+
+            if (equipmentId) {
                 toast({
                     title: "Articolo Rilevato",
                     description: `Redirect all'articolo...`,
                 });
-                router.push(`/equipment/${data.equipmentId}`);
-            } else if (data.type === "event" && data.eventId) {
-                router.push(`/events/${data.eventId}`);
+                router.push(`/equipment/${equipmentId}`);
+                return;
+            }
+
+            // Ricerca per campo qr_code
+            const { data: equipment, error } = await getEquipmentByQRCode(decodedText);
+
+            if (equipment) {
+                toast({
+                    title: "Articolo Trovato",
+                    description: `${equipment.name} rilevato. Apertura dettaglio...`,
+                });
+                router.push(`/equipment/${equipment.id}`);
             } else {
                 setResult(decodedText);
+                toast({
+                    title: "Nessuna attrezzatura trovata",
+                    description: "Nessuna attrezzatura trovata per questo QR code.",
+                    variant: "destructive",
+                });
             }
-        } catch (e) {
-            setResult(decodedText);
+        } catch (error) {
+            console.error("Errore durante la ricerca:", error);
+            toast({
+                title: "Errore di sistema",
+                description: "Si è verificato un errore durante la ricerca dell'attrezzatura.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsSearching(false)
         }
     };
 
@@ -86,9 +124,15 @@ export default function ScannerPage() {
                         <Button 
                             size="lg" 
                             onClick={() => setScanning(true)}
-                            className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-6 px-10 rounded-2xl shadow-lg shadow-teal-500/20 transition-all hover:scale-105 active:scale-95"
+                            disabled={isSearching}
+                            className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-6 px-10 rounded-2xl shadow-lg shadow-teal-500/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
                         >
-                            <Camera className="mr-2 h-6 w-6" /> Avvia Scanner
+                            {isSearching ? (
+                                <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            ) : (
+                                <Camera className="mr-2 h-6 w-6" />
+                            )}
+                            {isSearching ? "Ricerca in corso..." : "Avvia Scanner"}
                         </Button>
                     </div>
                 ) : (

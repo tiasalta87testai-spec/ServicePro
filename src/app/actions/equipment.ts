@@ -24,6 +24,25 @@ export type Equipment = {
     insurance_value: number | null
     notes_maintenance: string | null
     document_url: string | null
+    qr_code: string | null
+    description: string | null
+    ubicazione: string | null
+}
+
+export async function getEquipmentByQRCode(qrCode: string) {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+        .from('equipment')
+        .select('*')
+        .eq('qr_code', qrCode)
+        .single()
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    return { data: data as Equipment }
 }
 
 
